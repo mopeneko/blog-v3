@@ -6,6 +6,7 @@ export default function Home() {
       {Array.from({ length: 3 }).map((_, i) => (
         <ArticleCard
           key={i}
+          slug={i.toString()}
           title="たいとる"
           publishedDate={new Date()}
           updatedDate={new Date()}

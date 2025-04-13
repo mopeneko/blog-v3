@@ -15,6 +15,7 @@ interface Tag {
 }
 
 interface ArticleCardProps {
+  slug: string;
   image?: ArticleImage;
   title: string;
   publishedDate: Date;
@@ -29,13 +30,14 @@ const formatter = new Intl.DateTimeFormat('ja-JP', {
 });
 
 export const ArticleCard = ({
+  slug,
   image,
   title,
   publishedDate,
   updatedDate,
   tags,
 }: ArticleCardProps) => (
-  <Link href="/posts/slug">
+  <Link href={`/posts/${slug}`}>
     <article className="card bg-base-200 shadow-sm">
       {image && (
         <figure className="aspect-video">
