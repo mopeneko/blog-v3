@@ -15,9 +15,11 @@ export default function RootLayout({
   return (
     <html lang="ja" data-theme="pastel">
       <body>
-        <NavBar />
-        {children}
-        <Footer />
+        <div className="flex flex-col gap-4">
+          <NavBar />
+          {children}
+          <Footer className="mb-4" />
+        </div>
       </body>
     </html>
   );
