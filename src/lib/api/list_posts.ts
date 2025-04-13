@@ -1,4 +1,4 @@
-import { createClient, GetContentsQuery } from 'newt-client-js';
+import { createClient } from 'newt-client-js';
 import { z } from 'zod';
 
 const content = z.object({
@@ -49,6 +49,7 @@ const product = z
     name: z.string(),
     manufacture: z.string(),
     links: z.array(link),
+    image: z.nullable(image),
   })
   .merge(content);
 
@@ -71,11 +72,25 @@ const client = createClient({
   apiType: process.env.NEWT_API_TYPE as 'api' | 'cdn',
 });
 
-export const fetchPosts = async (query?: GetContentsQuery) => {
-  const result = await client.getContents<z.infer<typeof post>>({
+type Post = z.infer<typeof post>;
+
+export const fetchPosts = async () => {
+  const result = await client.getContents<Post>({
     appUid: process.env.NEWT_APP_UID!,
     modelUid: process.env.NEWT_MODEL_UID!,
-    query: query,
+    query: {
+      order: ['-published_at'],
+      depth: 2,
+    },
   });
   return result.items.map((item) => post.parse(item));
+};
+
+export const fetchPostBySlug = async (slug: string) => {
+  const result = await client.getContents<Post>({
+    appUid: process.env.NEWT_APP_UID!,
+    modelUid: process.env.NEWT_MODEL_UID!,
+    query: { slug: { match: slug }, depth: 2 },
+  });
+  return post.parse(result.items[0]);
 };
