@@ -94,3 +94,16 @@ export const fetchPostBySlug = async (slug: string) => {
   });
   return post.parse(result.items[0]);
 };
+
+export const fetchPostsByTags = async (tags: string[]) => {
+  const result = await client.getContents<Post>({
+    appUid: process.env.NEWT_APP_UID!,
+    modelUid: process.env.NEWT_MODEL_UID!,
+    query: {
+      'tags[in]': tags.join(','),
+      order: ['-published_at'],
+      depth: 2,
+    },
+  });
+  return result.items.map((item) => post.parse(item));
+};

@@ -1,5 +1,6 @@
 import { ProductCard } from '@/components/ProductCard';
 import { Tag as TagComponent } from '@/components/Tag';
+import { fetchPostsByTags } from '@/lib/api/list_posts';
 import NextImage from 'next/image';
 import NextLink from 'next/link';
 
@@ -37,7 +38,13 @@ interface ArticleProps {
   product?: Product;
 }
 
-export const Article = ({
+const formatter = new Intl.DateTimeFormat('ja-JP', {
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit',
+});
+
+export const Article = async ({
   title,
   publishedAt,
   updatedAt,
@@ -45,50 +52,84 @@ export const Article = ({
   thumbnail,
   tags,
   product,
-}: ArticleProps) => (
-  <article className="max-w-lg mx-auto px-2 my-8">
-    <h1 className="text-2xl font-bold">{title}</h1>
+}: ArticleProps) => {
+  const relatedPosts = await fetchPostsByTags(tags.map((tag) => tag.id));
 
-    <div className="grid grid-row-1 gap-y-2 mt-2">
-      <div className="text-xs text-right">
-        <div>Published on {publishedAt}</div>
-        <div>Updated on {updatedAt}</div>
+  return (
+    <article className="max-w-lg mx-auto px-2 my-8">
+      <h1 className="text-2xl font-bold">{title}</h1>
+
+      <div className="grid grid-row-1 gap-y-2 mt-2">
+        <div className="text-xs text-right">
+          <div>Published on {formatter.format(new Date(publishedAt))}</div>
+          <div>Updated on {formatter.format(new Date(updatedAt))}</div>
+        </div>
+
+        <div className="text-right">
+          {tags.map((tag) => (
+            <NextLink key={tag.id} href={`/${tag.id}`}>
+              <TagComponent name={tag.name} />
+            </NextLink>
+          ))}
+        </div>
       </div>
 
-      <div className="text-right">
-        {tags.map((tag) => (
-          <NextLink key={tag.id} href={`/${tag.id}`}>
-            <TagComponent name={tag.name} />
-          </NextLink>
-        ))}
-      </div>
-    </div>
+      {thumbnail && (
+        <figure className="mt-4">
+          <NextImage
+            className="w-full rounded-lg"
+            src={thumbnail.src}
+            alt={thumbnail.altText}
+            width={thumbnail.width}
+            height={thumbnail.height}
+            loading="lazy"
+          />
+        </figure>
+      )}
 
-    {thumbnail && (
-      <figure className="mt-4">
-        <NextImage
-          className="w-full rounded-lg"
-          src={thumbnail.src}
-          alt={thumbnail.altText}
-          width={thumbnail.width}
-          height={thumbnail.height}
-          loading="lazy"
-        />
-      </figure>
-    )}
-
-    <div
-      className="prose mt-8 w-full m-auto"
-      dangerouslySetInnerHTML={{ __html: content }}
-    />
-
-    {product && (
-      <ProductCard
-        name={product.name}
-        manufacture={product.manufacture}
-        image={product.image}
-        links={product.links}
+      <div
+        className="prose mt-8 w-full m-auto"
+        dangerouslySetInnerHTML={{ __html: content }}
       />
-    )}
-  </article>
-);
+
+      {product && (
+        <ProductCard
+          name={product.name}
+          manufacture={product.manufacture}
+          image={product.image}
+          links={product.links}
+        />
+      )}
+
+      {relatedPosts.map((post) => (
+        <NextLink key={post._id} href={`/posts/${post.slug}`}>
+          <article className="card bg-base-200 shadow-sm mt-4">
+            <div className="card-body">
+              <h2 className="card-title">{post.title}</h2>
+
+              <footer className="card-actions justify-end">
+                <div className="grid grid-row-1 gap-y-2">
+                  <div className="text-xs text-right">
+                    <div>
+                      Published on{' '}
+                      {formatter.format(new Date(post.published_at))}
+                    </div>
+                    <div>
+                      Updated on {formatter.format(new Date(post.updated_at))}
+                    </div>
+                  </div>
+
+                  <div className="text-right">
+                    {post.tags.map((tag) => (
+                      <TagComponent key={tag._id} name={tag.name} />
+                    ))}
+                  </div>
+                </div>
+              </footer>
+            </div>
+          </article>
+        </NextLink>
+      ))}
+    </article>
+  );
+};
