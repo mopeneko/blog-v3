@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
-import { NavBar } from '@/app/components/NavBar';
-import { Footer } from '@/app/components/Footer';
+import { NavBar } from '@/components/NavBar';
+import { Footer } from '@/components/Footer';
 
 export const metadata: Metadata = {
   title: 'もぺブログ',

@@ -1,4 +1,4 @@
-import { ArticleCard } from '@/app/components/ArticleCard';
+import { ArticleCard } from '@/components/ArticleCard';
 import { fetchPosts } from '@/lib/api/list_posts';
 
 export default async function Home() {
