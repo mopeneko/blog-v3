@@ -1,4 +1,5 @@
 import { Tag as TagComponent } from '@/components/Tag';
+import React from 'react';
 
 interface Tag {
   id: string;
@@ -30,8 +31,11 @@ export const RelatedArticleCard = ({
           </div>
 
           <div className="text-right">
-            {tags.map((tag) => (
-              <TagComponent key={tag.id} name={tag.name} />
+            {tags.map((tag, i) => (
+              <React.Fragment key={tag.id}>
+                {i > 0 && ' '}
+                <TagComponent name={tag.name} />
+              </React.Fragment>
             ))}
           </div>
         </div>

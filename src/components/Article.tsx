@@ -1,4 +1,5 @@
 import { ProductCard } from '@/components/ProductCard';
+import { RelatedArticleCard } from '@/components/RelatedArticleCard';
 import { Tag as TagComponent } from '@/components/Tag';
 import { fetchPostsByTags } from '@/lib/api/list_posts';
 import NextImage from 'next/image';
@@ -103,31 +104,15 @@ export const Article = async ({
 
       {relatedPosts.map((post) => (
         <NextLink key={post._id} href={`/posts/${post.slug}`}>
-          <article className="card bg-base-200 shadow-sm mt-4">
-            <div className="card-body">
-              <h2 className="card-title">{post.title}</h2>
-
-              <footer className="card-actions justify-end">
-                <div className="grid grid-row-1 gap-y-2">
-                  <div className="text-xs text-right">
-                    <div>
-                      Published on{' '}
-                      {formatter.format(new Date(post.published_at))}
-                    </div>
-                    <div>
-                      Updated on {formatter.format(new Date(post.updated_at))}
-                    </div>
-                  </div>
-
-                  <div className="text-right">
-                    {post.tags.map((tag) => (
-                      <TagComponent key={tag._id} name={tag.name} />
-                    ))}
-                  </div>
-                </div>
-              </footer>
-            </div>
-          </article>
+          <RelatedArticleCard
+            title={post.title}
+            publishedAt={formatter.format(new Date(post.published_at))}
+            updatedAt={formatter.format(new Date(post.updated_at))}
+            tags={post.tags.map((tag) => ({
+              id: tag._id,
+              name: tag.name,
+            }))}
+          />
         </NextLink>
       ))}
     </article>
