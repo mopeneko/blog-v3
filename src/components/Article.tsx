@@ -4,6 +4,7 @@ import { Tag as TagComponent } from '@/components/Tag';
 import { fetchPostsByTags } from '@/lib/api/list_posts';
 import NextImage from 'next/image';
 import NextLink from 'next/link';
+import React from 'react';
 
 interface Image {
   src: string;
@@ -67,10 +68,11 @@ export const Article = async ({
         </div>
 
         <div className="text-right">
-          {tags.map((tag) => (
-            <NextLink key={tag.id} href={`/${tag.id}`}>
+          {tags.map((tag, i) => (
+            <React.Fragment key={tag.id}>
+              {i > 0 && ' '}
               <TagComponent name={tag.name} />
-            </NextLink>
+            </React.Fragment>
           ))}
         </div>
       </div>
