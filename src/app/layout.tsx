@@ -33,8 +33,12 @@ export default function RootLayout({
           {children}
           <Footer className="mb-4" />
         </div>
-        <Script src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3857753364740983" />
-        <Script src="https://cloud.umami.is/script.js" />
+        {process.env.NODE_ENV === 'production' && (
+          <>
+            <Script src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3857753364740983" />
+            <Script src="https://cloud.umami.is/script.js" />
+          </>
+        )}
       </body>
     </html>
   );
