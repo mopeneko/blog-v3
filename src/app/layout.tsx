@@ -5,6 +5,18 @@ import { Footer } from '@/components/Footer';
 
 export const metadata: Metadata = {
   title: 'もぺブログ',
+  twitter: {
+    card: 'summary',
+    site: '@nkyna_',
+    creator: '@nkyna_',
+    title: 'もぺブログ',
+  },
+  openGraph: {
+    type: 'website',
+    url: 'https://www.mope-blog.com',
+    title: 'もぺブログ',
+    siteName: 'もぺブログ',
+  },
 };
 
 export default function RootLayout({

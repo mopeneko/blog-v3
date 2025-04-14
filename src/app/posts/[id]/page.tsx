@@ -1,5 +1,37 @@
 import { Article } from '@/components/Article';
 import { fetchPostBySlug } from '@/lib/api/list_posts';
+import { Metadata } from 'next';
+
+export async function generateMetadata({
+  params,
+}: { params: Promise<{ id: string }> }): Promise<Metadata> {
+  const id = (await params).id;
+  const post = await fetchPostBySlug(id);
+  const image = post.thumbnail
+    ? {
+        url: post.thumbnail.src,
+        width: post.thumbnail.width,
+        height: post.thumbnail.height,
+      }
+    : undefined;
+  return {
+    title: `${post.title} - もぺブログ`,
+    openGraph: {
+      type: 'website',
+      url: `https://www.mope-blog.com/posts/${id}`,
+      title: `${post.title} - もぺブログ`,
+      siteName: 'もぺブログ',
+      images: image,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      site: '@nkyna_',
+      creator: '@nkyna_',
+      title: `${post.title} - もぺブログ`,
+      images: image,
+    },
+  };
+}
 
 export default async function Post({
   params,
