@@ -71,7 +71,9 @@ export const Article = async ({
           {tags.map((tag, i) => (
             <React.Fragment key={tag.id}>
               {i > 0 && ' '}
-              <TagComponent name={tag.name} />
+              <NextLink href={`/tags/${tag.id}`}>
+                <TagComponent name={tag.name} />
+              </NextLink>
             </React.Fragment>
           ))}
         </div>
