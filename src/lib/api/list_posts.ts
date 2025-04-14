@@ -74,6 +74,19 @@ const client = createClient({
 
 type Post = z.infer<typeof post>;
 
+const page = z
+  .object({
+    title: z.string(),
+    slug: z.string(),
+    content: z.string(),
+    thumbnail: z.nullable(image),
+    published_at: z.string(),
+    updated_at: z.string(),
+  })
+  .merge(content);
+
+type Page = z.infer<typeof page>;
+
 export const fetchPosts = async () => {
   const result = await client.getContents<Post>({
     appUid: process.env.NEWT_APP_UID!,
@@ -106,4 +119,13 @@ export const fetchPostsByTags = async (tags: string[]) => {
     },
   });
   return result.items.map((item) => post.parse(item));
+};
+
+export const fetchPageBySlug = async (slug: string) => {
+  const result = await client.getContents<Page>({
+    appUid: process.env.NEWT_APP_UID!,
+    modelUid: process.env.NEWT_PAGE_MODEL_UID!,
+    query: { slug: { match: slug }, depth: 2 },
+  });
+  return page.parse(result.items[0]);
 };
