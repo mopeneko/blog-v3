@@ -1,6 +1,9 @@
 import { Article } from '@/components/Article';
 import { fetchPostBySlug } from '@/lib/api/list_posts';
+import { Root } from 'hast';
 import { Metadata } from 'next';
+import { rehype } from 'rehype';
+import { visit } from 'unist-util-visit';
 
 export async function generateMetadata({
   params,
@@ -33,6 +36,61 @@ export async function generateMetadata({
   };
 }
 
+const rehypeInsertAdsPlugin = () => {
+  let count = 0;
+
+  return (tree: Root) => {
+    visit(tree, 'element', (node) => {
+      if (node.tagName !== 'h2' || node.properties?.['ad-heading']) {
+        return;
+      }
+
+      count++;
+      if (count !== 2) {
+        return;
+      }
+
+      const headingText = node.children[0];
+
+      node.tagName = 'div';
+      node.children = [
+        {
+          type: 'element',
+          tagName: 'ins',
+          properties: {
+            className: 'adsbygoogle',
+            style: 'display:block; text-align:center;',
+            'data-ad-layout': 'in-article',
+            'data-ad-format': 'fluid',
+            'data-ad-client': 'ca-pub-3857753364740983',
+            'data-ad-slot': '1281498636',
+          },
+          children: [],
+        },
+        {
+          type: 'element',
+          tagName: 'script',
+          properties: {},
+          children: [
+            {
+              type: 'text',
+              value: '(adsbygoogle = window.adsbygoogle || []).push({});',
+            },
+          ],
+        },
+        {
+          type: 'element',
+          tagName: 'h2',
+          properties: {
+            'ad-heading': true,
+          },
+          children: [headingText],
+        },
+      ];
+    });
+  };
+};
+
 export default async function Post({
   params,
 }: { params: Promise<{ id: string }> }) {
@@ -47,12 +105,16 @@ export default async function Post({
     })),
   };
 
+  const content = String(
+    await rehype().use(rehypeInsertAdsPlugin).process(post.content),
+  );
+
   return (
     <Article
       title={post.title}
       publishedAt={post.published_at}
       updatedAt={post.updated_at}
-      content={post.content}
+      content={content}
       thumbnail={post.thumbnail || undefined}
       tags={post.tags.map((tag) => ({
         id: tag._id,
