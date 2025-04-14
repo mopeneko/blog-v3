@@ -58,10 +58,10 @@ export const Article = async ({
   const relatedPosts = await fetchPostsByTags(tags.map((tag) => tag.id));
 
   return (
-    <article className="max-w-lg mx-auto px-2 my-8">
+    <article className="max-w-lg mx-auto px-2 flex flex-col gap-y-4">
       <h1 className="text-2xl font-bold">{title}</h1>
 
-      <div className="grid grid-row-1 gap-y-2 mt-2">
+      <div className="grid grid-row-1 gap-y-2">
         <div className="text-xs text-right">
           <div>Published on {formatter.format(new Date(publishedAt))}</div>
           <div>Updated on {formatter.format(new Date(updatedAt))}</div>
@@ -78,20 +78,18 @@ export const Article = async ({
       </div>
 
       {thumbnail && (
-        <figure className="mt-4">
-          <NextImage
-            className="w-full rounded-lg"
-            src={thumbnail.src}
-            alt={thumbnail.altText}
-            width={thumbnail.width}
-            height={thumbnail.height}
-            loading="lazy"
-          />
-        </figure>
+        <NextImage
+          className="w-full rounded-lg"
+          src={thumbnail.src}
+          alt={thumbnail.altText}
+          width={thumbnail.width}
+          height={thumbnail.height}
+          loading="lazy"
+        />
       )}
 
       <div
-        className="prose mt-8 w-full m-auto"
+        className="prose w-full m-auto"
         dangerouslySetInnerHTML={{ __html: content }}
       />
 

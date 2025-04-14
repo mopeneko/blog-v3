@@ -19,7 +19,7 @@ export const RelatedArticleCard = ({
   updatedAt,
   tags,
 }: RelatedArticleCardProps) => (
-  <article className="card bg-base-200 shadow-sm mt-4">
+  <article className="card bg-base-200 shadow-sm">
     <div className="card-body">
       <h2 className="card-title">{title}</h2>
 

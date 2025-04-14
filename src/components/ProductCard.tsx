@@ -25,36 +25,34 @@ export const ProductCard = ({
   image,
   links,
 }: ProductCardProps) => (
-  <div className="prose mt-8 w-full m-auto">
-    <div className="not-prose card bg-base-300 shadow-sm">
-      {image && (
-        <figure className="aspect-video">
-          <Image
-            className="h-full"
-            src={image.src}
-            alt={image.altText}
-            width={image.width}
-            height={image.height}
-            loading="lazy"
-          />
-        </figure>
-      )}
+  <div className="card bg-base-300 shadow-sm">
+    {image && (
+      <figure className="aspect-video">
+        <Image
+          className="h-full"
+          src={image.src}
+          alt={image.altText}
+          width={image.width}
+          height={image.height}
+          loading="lazy"
+        />
+      </figure>
+    )}
 
-      <div className="card-body">
-        <div className="flex justify-between">
-          <h3 className="card-title">{name}</h3>
-          <span className="text-xs">PR</span>
-        </div>
-        <p className="card-text text-sm">{manufacture}</p>
-
-        <footer className="card-actions justify-end">
-          {links.map((link) => (
-            <a key={link.text} href={link.url} className="btn btn-primary">
-              {link.text}
-            </a>
-          ))}
-        </footer>
+    <div className="card-body">
+      <div className="flex justify-between">
+        <h3 className="card-title">{name}</h3>
+        <span className="text-xs">PR</span>
       </div>
+      <p className="card-text text-sm">{manufacture}</p>
+
+      <footer className="card-actions justify-end">
+        {links.map((link) => (
+          <a key={link.text} href={link.url} className="btn btn-primary">
+            {link.text}
+          </a>
+        ))}
+      </footer>
     </div>
   </div>
 );
