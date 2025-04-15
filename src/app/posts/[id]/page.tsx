@@ -4,6 +4,8 @@ import { Root } from 'hast';
 import { Metadata } from 'next';
 import { rehype } from 'rehype';
 import { visit } from 'unist-util-visit';
+import { LiteYTEmbed } from '@/components/LiteYTEmbed';
+import 'lite-youtube-embed/src/lite-yt-embed.css';
 
 export async function generateMetadata({
   params,
@@ -110,17 +112,20 @@ export default async function Post({
   );
 
   return (
-    <Article
-      title={post.title}
-      publishedAt={post.published_at}
-      updatedAt={post.updated_at}
-      content={content}
-      thumbnail={post.thumbnail || undefined}
-      tags={post.tags.map((tag) => ({
-        id: tag._id,
-        name: tag.name,
-      }))}
-      product={product || undefined}
-    />
+    <>
+      <Article
+        title={post.title}
+        publishedAt={post.published_at}
+        updatedAt={post.updated_at}
+        content={content}
+        thumbnail={post.thumbnail || undefined}
+        tags={post.tags.map((tag) => ({
+          id: tag._id,
+          name: tag.name,
+        }))}
+        product={product || undefined}
+      />
+      <LiteYTEmbed />
+    </>
   );
 }
