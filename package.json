@@ -10,6 +10,7 @@
     "format": "biome format --write"
   },
   "dependencies": {
+    "lite-youtube-embed": "^0.3.3",
     "newt-client-js": "^3.3.8",
     "next": "15.3.0",
     "react": "^19.0.0",
