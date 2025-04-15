@@ -86,7 +86,6 @@ export const Article = async ({
           alt={thumbnail.altText}
           width={thumbnail.width}
           height={thumbnail.height}
-          loading="lazy"
         />
       )}
 

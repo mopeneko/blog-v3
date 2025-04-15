@@ -47,7 +47,6 @@ export const Page = async ({
           alt={thumbnail.altText}
           width={thumbnail.width}
           height={thumbnail.height}
-          loading="lazy"
         />
       )}
 
