@@ -35,8 +35,14 @@ export default function RootLayout({
         </div>
         {process.env.NODE_ENV === 'production' && (
           <>
-            <Script src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3857753364740983" />
-            <Script src="https://cloud.umami.is/script.js" />
+            <Script
+              src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3857753364740983"
+              crossOrigin="anonymous"
+            />
+            <Script
+              src="https://cloud.umami.is/script.js"
+              data-website-id="871a8d52-f12f-4d22-bce2-bdedd46679d9"
+            />
           </>
         )}
       </body>
