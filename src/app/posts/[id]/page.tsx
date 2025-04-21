@@ -6,6 +6,7 @@ import { rehype } from 'rehype';
 import { visit } from 'unist-util-visit';
 import { LiteYTEmbed } from '@/components/LiteYTEmbed';
 import 'lite-youtube-embed/src/lite-yt-embed.css';
+import { generatePostJsonLd } from '@/lib/structured-data/post';
 
 export async function generateMetadata({
   params,
@@ -124,6 +125,20 @@ export default async function Post({
           name: tag.name,
         }))}
         product={product || undefined}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(
+            generatePostJsonLd({
+              title: post.title,
+              slug: post.slug,
+              thumbnail: post.thumbnail?.src,
+              publishedAt: post.published_at,
+              updatedAt: post.updated_at,
+            }),
+          ),
+        }}
       />
       <LiteYTEmbed />
     </>
