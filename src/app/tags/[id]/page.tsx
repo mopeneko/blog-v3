@@ -12,7 +12,9 @@ export async function generateMetadata({
 export default async function TagPage({
   params,
 }: { params: Promise<{ id: string }> }) {
-  const posts = await fetchPostsByTags([(await params).id]);
+  const id = (await params).id;
+  const tag = await fetchTagById(id);
+  const posts = await fetchPostsByTags([id]);
   const articleCards = posts.map((post) => {
     const thumbnail = post.thumbnail
       ? {
@@ -43,6 +45,7 @@ export default async function TagPage({
 
   return (
     <div className="flex flex-col w-full max-w-lg mx-auto px-2 gap-y-4">
+      <h2 className="text-2xl font-bold text-center">{tag.name}</h2>
       {articleCards}
     </div>
   );
