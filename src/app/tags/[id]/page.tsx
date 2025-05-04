@@ -1,5 +1,13 @@
 import { ArticleCard } from '@/components/ArticleCard';
-import { fetchPostsByTags } from '@/lib/api/list_posts';
+import { fetchPostsByTags, fetchTagById } from '@/lib/api/list_posts';
+
+export async function generateMetadata({
+  params,
+}: { params: Promise<{ id: string }> }) {
+  const id = (await params).id;
+  const tag = await fetchTagById(id);
+  return { title: `${tag.name} - もぺブログ` };
+}
 
 export default async function TagPage({
   params,
