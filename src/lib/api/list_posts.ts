@@ -44,6 +44,8 @@ const link = z.object({
 
 const tag = z.object({ name: z.string() }).merge(content);
 
+type Tag = z.infer<typeof tag>;
+
 const product = z
   .object({
     name: z.string(),
@@ -128,4 +130,13 @@ export const fetchPageBySlug = async (slug: string) => {
     query: { slug: { match: slug }, depth: 2 },
   });
   return page.parse(result.items[0]);
+};
+
+export const fetchTagById = async (id: string) => {
+  const result = await client.getContent<Tag>({
+    appUid: process.env.NEWT_APP_UID!,
+    modelUid: process.env.NEWT_TAG_MODEL_UID!,
+    contentId: id,
+  });
+  return tag.parse(result);
 };
