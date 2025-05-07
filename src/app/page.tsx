@@ -47,9 +47,11 @@ export default async function Home() {
                 data-ad-client="ca-pub-3857753364740983"
                 data-ad-slot="5385219852"
               ></ins>
-              <Script id={`adsbygoogle-${i}`}>
-                (adsbygoogle = window.adsbygoogle || []).push({});
-              </Script>
+              <script
+                dangerouslySetInnerHTML={{
+                  __html: '(adsbygoogle = window.adsbygoogle || []).push({});',
+                }}
+              />
             </>
           )}
           {articleCard}

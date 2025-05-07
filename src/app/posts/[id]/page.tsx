@@ -200,9 +200,11 @@ export default async function Post({
           data-ad-client="ca-pub-3857753364740983"
           data-ad-slot="3205804455"
         ></ins>
-        <Script id="adsbygoogle">
-          (adsbygoogle = window.adsbygoogle || []).push({});
-        </Script>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: '(adsbygoogle = window.adsbygoogle || []).push({});',
+          }}
+        />
       </article>
 
       <script
