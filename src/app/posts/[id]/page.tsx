@@ -13,7 +13,6 @@ import { visit } from 'unist-util-visit';
 import { LiteYTEmbed } from '@/components/LiteYTEmbed';
 import 'lite-youtube-embed/src/lite-yt-embed.css';
 import { generatePostJsonLd } from '@/lib/structured-data/post';
-import Script from 'next/script';
 
 export async function generateMetadata({
   params,
