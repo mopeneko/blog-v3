@@ -1,5 +1,6 @@
 import { ArticleCard } from '@/components/ArticleCard';
 import { fetchPosts } from '@/lib/api/list_posts';
+import Script from 'next/script';
 import React from 'react';
 
 export default async function Home() {
