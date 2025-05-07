@@ -110,7 +110,7 @@ export const fetchPostBySlug = async (slug: string) => {
   return post.parse(result.items[0]);
 };
 
-export const fetchPostsByTags = async (tags: string[]) => {
+export const fetchPostsByTags = async (tags: string[], limit?: number) => {
   const result = await client.getContents<Post>({
     appUid: process.env.NEWT_APP_UID!,
     modelUid: process.env.NEWT_MODEL_UID!,
@@ -118,6 +118,7 @@ export const fetchPostsByTags = async (tags: string[]) => {
       'tags[in]': tags.join(','),
       order: ['-published_at'],
       depth: 2,
+      limit,
     },
   });
   return result.items.map((item) => post.parse(item));
