@@ -124,7 +124,10 @@ export default async function Post({
     await rehype().use(rehypeInsertAdsPlugin).process(post.content),
   );
 
-  const relatedPosts = await fetchPostsByTags(post.tags.map((tag) => tag._id));
+  const relatedPosts = await fetchPostsByTags(
+    post.tags.map((tag) => tag._id),
+    3,
+  );
 
   return (
     <>
@@ -189,6 +192,14 @@ export default async function Post({
             />
           </NextLink>
         ))}
+        <ins
+          className="adsbygoogle"
+          style={{ display: 'block' }}
+          data-ad-format="autorelaxed"
+          data-ad-client="ca-pub-3857753364740983"
+          data-ad-slot="3205804455"
+        ></ins>
+        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
       </article>
 
       <script
