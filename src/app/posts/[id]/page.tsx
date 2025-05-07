@@ -1,5 +1,11 @@
-import { Article } from '@/components/Article';
+import { ProductCard } from '@/components/ProductCard';
+import { RelatedArticleCard } from '@/components/RelatedArticleCard';
+import { Tag as TagComponent } from '@/components/Tag';
+import { fetchPostsByTags } from '@/lib/api/list_posts';
 import { fetchPostBySlug } from '@/lib/api/list_posts';
+import NextImage from 'next/image';
+import NextLink from 'next/link';
+import React from 'react';
 import { Root } from 'hast';
 import { Metadata } from 'next';
 import { rehype } from 'rehype';
@@ -94,6 +100,12 @@ const rehypeInsertAdsPlugin = () => {
   };
 };
 
+const formatter = new Intl.DateTimeFormat('ja-JP', {
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit',
+});
+
 export default async function Post({
   params,
 }: { params: Promise<{ id: string }> }) {
@@ -112,20 +124,73 @@ export default async function Post({
     await rehype().use(rehypeInsertAdsPlugin).process(post.content),
   );
 
+  const relatedPosts = await fetchPostsByTags(post.tags.map((tag) => tag._id));
+
   return (
     <>
-      <Article
-        title={post.title}
-        publishedAt={post.published_at}
-        updatedAt={post.updated_at}
-        content={content}
-        thumbnail={post.thumbnail || undefined}
-        tags={post.tags.map((tag) => ({
-          id: tag._id,
-          name: tag.name,
-        }))}
-        product={product || undefined}
-      />
+      <article className="max-w-lg mx-auto px-2 flex flex-col gap-y-4">
+        <h1 className="text-2xl font-bold">{post.title}</h1>
+
+        <div className="grid grid-row-1 gap-y-2">
+          <div className="text-xs text-right">
+            <div>
+              Published on {formatter.format(new Date(post.published_at))}
+            </div>
+            <div>Updated on {formatter.format(new Date(post.updated_at))}</div>
+          </div>
+
+          <div className="text-right">
+            {post.tags.map((tag, i) => (
+              <React.Fragment key={tag._id}>
+                {i > 0 && ' '}
+                <NextLink href={`/tags/${tag._id}`}>
+                  <TagComponent name={tag.name} />
+                </NextLink>
+              </React.Fragment>
+            ))}
+          </div>
+        </div>
+
+        {post.thumbnail && (
+          <NextImage
+            className="w-full rounded-lg"
+            src={post.thumbnail.src}
+            alt={post.thumbnail.altText}
+            width={post.thumbnail.width}
+            height={post.thumbnail.height}
+            loading="eager"
+          />
+        )}
+
+        <div
+          className="prose w-full m-auto"
+          dangerouslySetInnerHTML={{ __html: content }}
+        />
+
+        {product && (
+          <ProductCard
+            name={product.name}
+            manufacture={product.manufacture}
+            image={product.image}
+            links={product.links}
+          />
+        )}
+
+        {relatedPosts.map((relatedPost) => (
+          <NextLink key={relatedPost._id} href={`/posts/${relatedPost.slug}`}>
+            <RelatedArticleCard
+              title={relatedPost.title}
+              publishedAt={formatter.format(new Date(relatedPost.published_at))}
+              updatedAt={formatter.format(new Date(relatedPost.updated_at))}
+              tags={relatedPost.tags.map((tag) => ({
+                id: tag._id,
+                name: tag.name,
+              }))}
+            />
+          </NextLink>
+        ))}
+      </article>
+
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
