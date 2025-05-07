@@ -13,6 +13,7 @@ import { visit } from 'unist-util-visit';
 import { LiteYTEmbed } from '@/components/LiteYTEmbed';
 import 'lite-youtube-embed/src/lite-yt-embed.css';
 import { generatePostJsonLd } from '@/lib/structured-data/post';
+import Script from 'next/script';
 
 export async function generateMetadata({
   params,
@@ -199,7 +200,9 @@ export default async function Post({
           data-ad-client="ca-pub-3857753364740983"
           data-ad-slot="3205804455"
         ></ins>
-        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+        <Script id="adsbygoogle">
+          (adsbygoogle = window.adsbygoogle || []).push({});
+        </Script>
       </article>
 
       <script
