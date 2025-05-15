@@ -18,6 +18,11 @@ export const metadata: Metadata = {
     title: 'もぺブログ',
     siteName: 'もぺブログ',
   },
+  alternates: {
+    types: {
+      'application/rss+xml': `${process.env.NEXT_PUBLIC_SITE_URL}/rss.xml`,
+    },
+  },
 };
 
 export default function RootLayout({

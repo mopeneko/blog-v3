@@ -6,7 +6,26 @@ export async function generateMetadata({
 }: { params: Promise<{ id: string }> }) {
   const id = (await params).id;
   const tag = await fetchTagById(id);
-  return { title: `${tag.name} - もぺブログ` };
+  return {
+    title: `${tag.name} - もぺブログ`,
+    twitter: {
+      card: 'summary',
+      site: '@nkyna_',
+      creator: '@nkyna_',
+      title: `${tag.name} - もぺブログ`,
+    },
+    openGraph: {
+      type: 'website',
+      url: `${process.env.NEXT_PUBLIC_SITE_URL}/tags/${id}`,
+      title: `${tag.name} - もぺブログ`,
+      siteName: 'もぺブログ',
+    },
+    alternates: {
+      types: {
+        'application/rss+xml': `${process.env.NEXT_PUBLIC_SITE_URL}/rss.xml`,
+      },
+    },
+  };
 }
 
 export default async function TagPage({

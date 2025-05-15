@@ -31,6 +31,11 @@ export async function generateMetadata({
       title: `${page.title} - もぺブログ`,
       images: image,
     },
+    alternates: {
+      types: {
+        'application/rss+xml': `${process.env.NEXT_PUBLIC_SITE_URL}/rss.xml`,
+      },
+    },
   };
 }
 
