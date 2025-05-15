@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     type: 'website',
-    url: 'https://www.mope-blog.com',
+    url: process.env.NEXT_PUBLIC_SITE_URL,
     title: 'もぺブログ',
     siteName: 'もぺブログ',
   },

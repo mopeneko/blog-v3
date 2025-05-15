@@ -21,16 +21,16 @@ export async function generateMetadata({
   const post = await fetchPostBySlug(id);
   const image = post.thumbnail
     ? {
-        url: post.thumbnail.src,
-        width: post.thumbnail.width,
-        height: post.thumbnail.height,
-      }
+      url: post.thumbnail.src,
+      width: post.thumbnail.width,
+      height: post.thumbnail.height,
+    }
     : undefined;
   return {
     title: `${post.title} - もぺブログ`,
     openGraph: {
       type: 'website',
-      url: `https://www.mope-blog.com/posts/${id}`,
+      url: `${process.env.NEXT_PUBLIC_SITE_URL}/posts/${id}`,
       title: `${post.title} - もぺブログ`,
       siteName: 'もぺブログ',
       images: image,

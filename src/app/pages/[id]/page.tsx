@@ -10,16 +10,16 @@ export async function generateMetadata({
   const page = await fetchPageBySlug(id);
   const image = page.thumbnail
     ? {
-        url: page.thumbnail.src,
-        width: page.thumbnail.width,
-        height: page.thumbnail.height,
-      }
+      url: page.thumbnail.src,
+      width: page.thumbnail.width,
+      height: page.thumbnail.height,
+    }
     : undefined;
   return {
     title: `${page.title} - もぺブログ`,
     openGraph: {
       type: 'website',
-      url: `https://www.mope-blog.com/pages/${id}`,
+      url: `${process.env.NEXT_PUBLIC_SITE_URL}/pages/${id}`,
       title: `${page.title} - もぺブログ`,
       siteName: 'もぺブログ',
       images: image,
