@@ -21,10 +21,10 @@ export async function generateMetadata({
   const post = await fetchPostBySlug(id);
   const image = post.thumbnail
     ? {
-      url: post.thumbnail.src,
-      width: post.thumbnail.width,
-      height: post.thumbnail.height,
-    }
+        url: post.thumbnail.src,
+        width: post.thumbnail.width,
+        height: post.thumbnail.height,
+      }
     : undefined;
   return {
     title: `${post.title} - もぺブログ`,

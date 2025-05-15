@@ -10,10 +10,10 @@ export async function generateMetadata({
   const page = await fetchPageBySlug(id);
   const image = page.thumbnail
     ? {
-      url: page.thumbnail.src,
-      width: page.thumbnail.width,
-      height: page.thumbnail.height,
-    }
+        url: page.thumbnail.src,
+        width: page.thumbnail.width,
+        height: page.thumbnail.height,
+      }
     : undefined;
   return {
     title: `${page.title} - もぺブログ`,

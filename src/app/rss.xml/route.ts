@@ -2,9 +2,9 @@ import { fetchPosts } from '@/lib/api/list_posts';
 import { NextResponse } from 'next/server';
 
 export async function GET() {
-    const posts = await fetchPosts();
+  const posts = await fetchPosts();
 
-    const rssFeed = `<?xml version="1.0" encoding="UTF-8"?>
+  const rssFeed = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Blog RSS Feed</title>
@@ -12,7 +12,9 @@ export async function GET() {
     <description>Latest blog posts</description>
     <language>ja</language>
     <atom:link href="${process.env.NEXT_PUBLIC_SITE_URL}/rss.xml" rel="self" type="application/rss+xml" />
-    ${posts.map(post => `
+    ${posts
+      .map(
+        (post) => `
       <item>
         <title>${escapeXml(post.title)}</title>
         <link>${process.env.NEXT_PUBLIC_SITE_URL}/posts/${post.slug}</link>
@@ -20,31 +22,39 @@ export async function GET() {
         <pubDate>${new Date(post.published_at).toUTCString()}</pubDate>
         <description>${escapeXml(extractExcerpt(post.content))}</description>
       </item>
-    `).join('')}
+    `,
+      )
+      .join('')}
   </channel>
 </rss>`;
 
-    return new NextResponse(rssFeed, {
-        headers: {
-            'Content-Type': 'application/rss+xml',
-        },
-    });
+  return new NextResponse(rssFeed, {
+    headers: {
+      'Content-Type': 'application/rss+xml',
+    },
+  });
 }
 
 function escapeXml(unsafe: string) {
-    return unsafe.replace(/[&<>'"]/g, (c) => {
-        switch (c) {
-            case '&': return '&amp;';
-            case '<': return '&lt;';
-            case '>': return '&gt;';
-            case '"': return '&quot;';
-            case "'": return '&apos;';
-            default: return c;
-        }
-    });
+  return unsafe.replace(/[&<>'"]/g, (c) => {
+    switch (c) {
+      case '&':
+        return '&amp;';
+      case '<':
+        return '&lt;';
+      case '>':
+        return '&gt;';
+      case '"':
+        return '&quot;';
+      case "'":
+        return '&apos;';
+      default:
+        return c;
+    }
+  });
 }
 
 function extractExcerpt(content: string, length = 200) {
-    const text = content.replace(/<[^>]*>/g, '');
-    return text.length > length ? `${text.substring(0, length)}...` : text;
+  const text = content.replace(/<[^>]*>/g, '');
+  return text.length > length ? `${text.substring(0, length)}...` : text;
 }
