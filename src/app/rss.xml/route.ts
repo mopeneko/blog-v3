@@ -3,8 +3,18 @@ import { NextResponse } from 'next/server';
 
 export async function GET() {
   const posts = await fetchPosts();
+  const rssFeed = generateRSSFeed(posts);
 
-  const rssFeed = `<?xml version="1.0" encoding="UTF-8"?>
+  return new NextResponse(rssFeed, {
+    headers: {
+      'Content-Type': 'application/rss+xml',
+    },
+  });
+}
+
+// posts: Post[] 型の引数を受け取り、RSSフィード文字列を返すプライベート関数
+function generateRSSFeed(posts: any[]): string {
+  return `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Blog RSS Feed</title>
@@ -27,12 +37,6 @@ export async function GET() {
       .join('')}
   </channel>
 </rss>`;
-
-  return new NextResponse(rssFeed, {
-    headers: {
-      'Content-Type': 'application/rss+xml',
-    },
-  });
 }
 
 function escapeXml(unsafe: string) {
