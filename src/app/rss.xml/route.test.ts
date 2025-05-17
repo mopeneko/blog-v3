@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { generateRSSFeed } from './route';
+import { generateRSSFeed } from './rss';
 import type { Post } from '@/lib/api/list_posts';
 
 const SITE_URL = 'https://example.com';
