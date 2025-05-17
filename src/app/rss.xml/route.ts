@@ -64,3 +64,5 @@ function extractExcerpt(content: string, length = 200) {
   const text = content.replace(/<[^>]*>/g, '');
   return text.length > length ? `${text.substring(0, length)}...` : text;
 }
+
+export { generateRSSFeed };
