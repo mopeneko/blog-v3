@@ -177,7 +177,6 @@ describe('generateRSSFeed', () => {
     // <description> もエスケープされている
     const doc = parseXml(rss);
     const desc = doc.getElementsByTagName('item')[0].getElementsByTagName('description')[0].textContent;
-    console.log(desc);
     expect(desc).toContain('&');
     expect(rss).toContain('<');
     expect(rss).toContain('>');
