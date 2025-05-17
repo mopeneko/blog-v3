@@ -1,4 +1,4 @@
-import { fetchPosts } from '@/lib/api/list_posts';
+import { fetchPosts, Post } from '@/lib/api/list_posts';
 import { NextResponse } from 'next/server';
 
 export async function GET() {
@@ -12,8 +12,10 @@ export async function GET() {
   });
 }
 
-// posts: Post[] 型の引数を受け取り、RSSフィード文字列を返すプライベート関数
-function generateRSSFeed(posts: any[]): string {
+/**
+ * Post[] 型の引数を受け取り、RSSフィード文字列を返すプライベート関数
+ */
+function generateRSSFeed(posts: Post[]): string {
   return `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>

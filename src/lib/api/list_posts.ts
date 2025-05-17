@@ -74,7 +74,7 @@ const client = createClient({
   apiType: process.env.NEWT_API_TYPE as 'api' | 'cdn',
 });
 
-type Post = z.infer<typeof post>;
+export type Post = z.infer<typeof post>;
 
 const page = z
   .object({
