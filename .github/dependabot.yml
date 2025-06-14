@@ -1,0 +1,58 @@
+version: 2
+updates:
+  # Enable version updates for npm
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "Asia/Tokyo"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "@me"
+    commit-message:
+      prefix: "deps"
+      include: "scope"
+    groups:
+      next-ecosystem:
+        patterns:
+          - "next*"
+          - "@next/*"
+          - "eslint-config-next"
+      react-ecosystem:
+        patterns:
+          - "react*"
+          - "@types/react*"
+      tailwind-ecosystem:
+        patterns:
+          - "tailwindcss"
+          - "@tailwindcss/*"
+          - "daisyui"
+      testing-ecosystem:
+        patterns:
+          - "vitest*"
+          - "@vitest/*"
+          - "@testing-library/*"
+          - "jsdom"
+      dev-tools:
+        patterns:
+          - "@biomejs/*"
+          - "eslint*"
+          - "typescript"
+          - "@types/*"
+      cloudflare-ecosystem:
+        patterns:
+          - "wrangler"
+          - "@opennextjs/*"
+
+  # Enable version updates for GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "Asia/Tokyo"
+    commit-message:
+      prefix: "ci"
