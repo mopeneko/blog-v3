@@ -14,6 +14,15 @@ bun format           # Format code with Biome
 bun lint             # Next.js linting
 ```
 
+## Deployment Commands
+
+```bash
+bun run preview      # Build and preview with OpenNext locally
+bun run deploy       # Build and deploy to Cloudflare Workers
+bun run upload       # Build and upload to Cloudflare Workers
+bun run cf-typegen   # Generate Cloudflare environment types
+```
+
 ## Architecture Overview
 
 This is a Japanese blog built with Next.js 15 App Router, deployed on Cloudflare Workers using OpenNext, with content managed through Newt CMS.
