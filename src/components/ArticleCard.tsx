@@ -4,7 +4,6 @@ import React from 'react';
 
 interface ArticleImage {
   src: string;
-  alt: string;
   width: number;
   height: number;
 }
@@ -43,7 +42,7 @@ export const ArticleCard = ({
         <figure className="aspect-video">
           <Image
             src={image.src}
-            alt={image.alt}
+            alt=""
             width={image.width}
             height={image.height}
             loading="lazy"

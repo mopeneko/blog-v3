@@ -8,20 +8,19 @@ export default async function Home() {
     const thumbnail = post.thumbnail
       ? {
           src: post.thumbnail.url,
-          alt: post.thumbnail.altText,
-          width: post.thumbnail.width,
-          height: post.thumbnail.height,
+          width: post.thumbnail.width ?? 0,
+          height: post.thumbnail.height ?? 0,
         }
       : undefined;
 
     const tags = post.tags.map((tag) => ({
-      id: tag._id,
+      id: tag.id,
       name: tag.name,
     }));
 
     return (
       <ArticleCard
-        key={post._id}
+        key={post.id}
         slug={post.slug}
         image={thumbnail}
         title={post.title}

@@ -120,8 +120,8 @@ export default async function Post({
     manufacture: post.product.manufacture,
     image: post.product.image,
     links: post.product.links.map((link) => ({
-      text: link.data.text,
-      url: link.data.url,
+      text: link.text,
+      url: link.url,
     })),
   };
 
@@ -130,7 +130,7 @@ export default async function Post({
   );
 
   const relatedPosts = await fetchPostsByTags(
-    post.tags.map((tag) => tag._id),
+    post.tags.map((tag) => tag.id),
     3,
   );
 
@@ -149,9 +149,9 @@ export default async function Post({
 
           <div className="text-right">
             {post.tags.map((tag, i) => (
-              <React.Fragment key={tag._id}>
+              <React.Fragment key={tag.id}>
                 {i > 0 && ' '}
-                <NextLink href={`/tags/${tag._id}`}>
+                <NextLink href={`/tags/${tag.id}`}>
                   <TagComponent name={tag.name} />
                 </NextLink>
               </React.Fragment>
@@ -163,7 +163,7 @@ export default async function Post({
           <NextImage
             className="w-full rounded-lg"
             src={post.thumbnail.url}
-            alt={post.thumbnail.altText}
+            alt={post.title}
             width={post.thumbnail.width}
             height={post.thumbnail.height}
             loading="eager"
@@ -179,19 +179,23 @@ export default async function Post({
           <ProductCard
             name={product.name}
             manufacture={product.manufacture}
-            image={product.image}
+            image={
+              product.image
+                ? { src: product.image.url, altText: product.name }
+                : null
+            }
             links={product.links}
           />
         )}
 
         {relatedPosts.map((relatedPost) => (
-          <NextLink key={relatedPost._id} href={`/posts/${relatedPost.slug}`}>
+          <NextLink key={relatedPost.id} href={`/posts/${relatedPost.slug}`}>
             <RelatedArticleCard
               title={relatedPost.title}
               publishedAt={formatter.format(new Date(relatedPost.published_at))}
               updatedAt={formatter.format(new Date(relatedPost.updated_at))}
               tags={relatedPost.tags.map((tag) => ({
-                id: tag._id,
+                id: tag.id,
                 name: tag.name,
               }))}
             />
@@ -218,7 +222,7 @@ export default async function Post({
             generatePostJsonLd({
               title: post.title,
               slug: post.slug,
-              thumbnail: post.thumbnail?.src,
+              thumbnail: post.thumbnail?.url,
               publishedAt: post.published_at,
               updatedAt: post.updated_at,
             }),

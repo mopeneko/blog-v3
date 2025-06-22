@@ -1,10 +1,8 @@
-import Image from 'next/image';
+import NextImage from 'next/image';
 
 interface Image {
   src: string;
   altText: string;
-  width: number;
-  height: number;
 }
 
 interface Link {
@@ -28,12 +26,10 @@ export const ProductCard = ({
   <div className="card bg-base-300 shadow-sm">
     {image && (
       <figure className="aspect-video">
-        <Image
+        <NextImage
           className="h-full"
           src={image.src}
           alt={image.altText}
-          width={image.width}
-          height={image.height}
           loading="lazy"
         />
       </figure>

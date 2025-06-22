@@ -57,25 +57,18 @@ describe('generateRSSFeed', () => {
 
   it('投稿が1つの場合、1つの<item>タグを含み内容が正しい', () => {
     const post: Post = {
-      _id: 'abc123',
+      id: 'abc123',
       title: 'テスト投稿',
       slug: 'test-post',
       content: '<p>これはテスト投稿の本文です。</p>',
       tags: [],
       published_at: '2024-05-01T12:00:00Z',
       updated_at: '2024-05-01T12:00:00Z',
-      thumbnail: null,
-      _sys: {
-        createdAt: '2024-05-01T12:00:00Z',
-        updatedAt: '2024-05-01T12:00:00Z',
-        customOrder: 0,
-        raw: {
-          createdAt: '2024-05-01T12:00:00Z',
-          updatedAt: '2024-05-01T12:00:00Z',
-          firstPublishedAt: '2024-05-01T12:00:00Z',
-          publishedAt: '2024-05-01T12:00:00Z',
-        },
-      },
+      thumbnail: undefined,
+      createdAt: '2024-05-01T12:00:00Z',
+      updatedAt: '2024-05-01T12:00:00Z',
+      revisedAt: '2024-05-01T12:00:00Z',
+      publishedAt: '2024-05-01T12:00:00Z',
       product: null,
     };
     const rss = generateRSSFeed([post]);
@@ -103,47 +96,33 @@ describe('generateRSSFeed', () => {
   it('投稿が複数の場合、各投稿に対応する<item>タグが正しい順序で含まれる', () => {
     const posts: Post[] = [
       {
-        _id: 'id1',
+        id: 'id1',
         title: '最新記事',
         slug: 'latest',
         content: '最新記事の内容',
         tags: [],
         published_at: '2024-05-02T10:00:00Z',
         updated_at: '2024-05-02T10:00:00Z',
-        thumbnail: null,
-        _sys: {
-          createdAt: '2024-05-02T10:00:00Z',
-          updatedAt: '2024-05-02T10:00:00Z',
-          customOrder: 0,
-          raw: {
-            createdAt: '2024-05-02T10:00:00Z',
-            updatedAt: '2024-05-02T10:00:00Z',
-            firstPublishedAt: '2024-05-02T10:00:00Z',
-            publishedAt: '2024-05-02T10:00:00Z',
-          },
-        },
+        thumbnail: undefined,
+        createdAt: '2024-05-01T12:00:00Z',
+        updatedAt: '2024-05-01T12:00:00Z',
+        revisedAt: '2024-05-01T12:00:00Z',
+        publishedAt: '2024-05-01T12:00:00Z',
         product: null,
       },
       {
-        _id: 'id2',
+        id: 'id2',
         title: '前の記事',
         slug: 'previous',
         content: '前の記事の内容',
         tags: [],
         published_at: '2024-05-01T09:00:00Z',
         updated_at: '2024-05-01T09:00:00Z',
-        thumbnail: null,
-        _sys: {
-          createdAt: '2024-05-01T09:00:00Z',
-          updatedAt: '2024-05-01T09:00:00Z',
-          customOrder: 0,
-          raw: {
-            createdAt: '2024-05-01T09:00:00Z',
-            updatedAt: '2024-05-01T09:00:00Z',
-            firstPublishedAt: '2024-05-01T09:00:00Z',
-            publishedAt: '2024-05-01T09:00:00Z',
-          },
-        },
+        thumbnail: undefined,
+        createdAt: '2024-05-01T12:00:00Z',
+        updatedAt: '2024-05-01T12:00:00Z',
+        revisedAt: '2024-05-01T12:00:00Z',
+        publishedAt: '2024-05-01T12:00:00Z',
         product: null,
       },
     ];
@@ -161,25 +140,18 @@ describe('generateRSSFeed', () => {
 
   it('titleやcontentにXML特殊文字が含まれる場合、正しくエスケープされる', () => {
     const post: Post = {
-      _id: 'id3',
+      id: 'id3',
       title: `特殊文字 & < > " ' テスト`,
       slug: 'escape-test',
       content: `<p>本文 & < > " ' テスト</p>`,
       tags: [],
       published_at: '2024-05-03T08:00:00Z',
       updated_at: '2024-05-03T08:00:00Z',
-      thumbnail: null,
-      _sys: {
-        createdAt: '2024-05-03T08:00:00Z',
-        updatedAt: '2024-05-03T08:00:00Z',
-        customOrder: 0,
-        raw: {
-          createdAt: '2024-05-03T08:00:00Z',
-          updatedAt: '2024-05-03T08:00:00Z',
-          firstPublishedAt: '2024-05-03T08:00:00Z',
-          publishedAt: '2024-05-03T08:00:00Z',
-        },
-      },
+      thumbnail: undefined,
+      createdAt: '2024-05-01T12:00:00Z',
+      updatedAt: '2024-05-01T12:00:00Z',
+      revisedAt: '2024-05-01T12:00:00Z',
+      publishedAt: '2024-05-01T12:00:00Z',
       product: null,
     };
     const rss = generateRSSFeed([post]);
@@ -202,25 +174,18 @@ describe('generateRSSFeed', () => {
   it('contentからextractExcerptで概要が抽出され、HTMLタグが除去され200文字で切り詰められる', () => {
     const longContent = '<p>' + 'あ'.repeat(300) + '</p>';
     const post: Post = {
-      _id: 'id4',
+      id: 'id4',
       title: '長文テスト',
       slug: 'long-content',
       content: longContent,
       tags: [],
       published_at: '2024-05-04T07:00:00Z',
       updated_at: '2024-05-04T07:00:00Z',
-      thumbnail: null,
-      _sys: {
-        createdAt: '2024-05-04T07:00:00Z',
-        updatedAt: '2024-05-04T07:00:00Z',
-        customOrder: 0,
-        raw: {
-          createdAt: '2024-05-04T07:00:00Z',
-          updatedAt: '2024-05-04T07:00:00Z',
-          firstPublishedAt: '2024-05-04T07:00:00Z',
-          publishedAt: '2024-05-04T07:00:00Z',
-        },
-      },
+      thumbnail: undefined,
+      createdAt: '2024-05-01T12:00:00Z',
+      updatedAt: '2024-05-01T12:00:00Z',
+      revisedAt: '2024-05-01T12:00:00Z',
+      publishedAt: '2024-05-01T12:00:00Z',
       product: null,
     };
     const rss = generateRSSFeed([post]);

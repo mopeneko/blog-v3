@@ -37,21 +37,20 @@ export default async function TagPage({
   const articleCards = posts.map((post) => {
     const thumbnail = post.thumbnail
       ? {
-          src: post.thumbnail.src,
-          alt: post.thumbnail.altText,
-          width: post.thumbnail.width,
-          height: post.thumbnail.height,
+          src: post.thumbnail.url,
+          width: post.thumbnail.width ?? 0,
+          height: post.thumbnail.height ?? 0,
         }
       : undefined;
 
     const tags = post.tags.map((tag) => ({
-      id: tag._id,
+      id: tag.id,
       name: tag.name,
     }));
 
     return (
       <ArticleCard
-        key={post._id}
+        key={post.id}
         slug={post.slug}
         image={thumbnail}
         title={post.title}
