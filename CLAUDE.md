@@ -25,11 +25,11 @@ bun run cf-typegen   # Generate Cloudflare environment types
 
 ## Architecture Overview
 
-This is a Japanese blog built with Next.js 15 App Router, deployed on Cloudflare Workers using OpenNext, with content managed through Newt CMS.
+This is a Japanese blog built with Next.js 15 App Router, deployed on Cloudflare Workers using OpenNext, with content managed through microCMS.
 
 ### Content Management System
 
-- **Newt CMS Integration**: All content fetching is centralized in `src/lib/api/list_posts.ts`
+- **microCMS Integration**: All content fetching is centralized in `src/lib/api/list_posts.ts`
 - **Type Safety**: Full Zod schema validation for all CMS content types (Post, Page, Tag, Product, Image)
 - **Content Types**: Posts (main content), Pages (static content), Tags (taxonomy), Products (affiliate content)
 
@@ -50,13 +50,8 @@ This is a Japanese blog built with Next.js 15 App Router, deployed on Cloudflare
 ### Required Environment Variables
 
 ```
-NEWT_SPACE_UID=          # Newt CMS space ID
-NEWT_TOKEN=              # Newt CMS API token  
-NEWT_API_TYPE=           # 'api' or 'cdn'
-NEWT_APP_UID=            # Newt app ID
-NEWT_MODEL_UID=          # Posts model ID
-NEWT_PAGE_MODEL_UID=     # Pages model ID  
-NEWT_TAG_MODEL_UID=      # Tags model ID
+MICROCMS_SERVICE_DOMAIN= # microCMS service domain
+MICROCMS_API_KEY=        # microCMS API key
 NEXT_PUBLIC_SITE_URL=    # Public site URL
 ```
 

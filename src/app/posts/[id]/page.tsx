@@ -21,7 +21,7 @@ export async function generateMetadata({
   const post = await fetchPostBySlug(id);
   const image = post.thumbnail
     ? {
-        url: post.thumbnail.src,
+        url: post.thumbnail.url,
         width: post.thumbnail.width,
         height: post.thumbnail.height,
       }
@@ -162,7 +162,7 @@ export default async function Post({
         {post.thumbnail && (
           <NextImage
             className="w-full rounded-lg"
-            src={post.thumbnail.src}
+            src={post.thumbnail.url}
             alt={post.thumbnail.altText}
             width={post.thumbnail.width}
             height={post.thumbnail.height}

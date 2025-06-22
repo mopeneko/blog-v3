@@ -7,7 +7,7 @@ export default async function Home() {
   const articleCards = posts.map((post) => {
     const thumbnail = post.thumbnail
       ? {
-          src: post.thumbnail.src,
+          src: post.thumbnail.url,
           alt: post.thumbnail.altText,
           width: post.thumbnail.width,
           height: post.thumbnail.height,

@@ -35,7 +35,9 @@ describe('generateRSSFeed', () => {
     expect(rss).toContain(`<link>${SITE_URL}</link>`);
     expect(rss).toContain('<description>Latest blog posts</description>');
     expect(rss).toContain('<language>ja</language>');
-    expect(rss).toContain(`<atom:link href="${SITE_URL}/rss.xml" rel="self" type="application/rss+xml" />`);
+    expect(rss).toContain(
+      `<atom:link href="${SITE_URL}/rss.xml" rel="self" type="application/rss+xml" />`,
+    );
   });
 
   it('生成されたRSSがXMLとしてパース可能である', () => {
@@ -82,12 +84,20 @@ describe('generateRSSFeed', () => {
     expect(items.length).toBe(1);
 
     const item = items[0];
-    expect(item.getElementsByTagName('title')[0].textContent).toBe('テスト投稿');
-    expect(item.getElementsByTagName('link')[0].textContent).toBe(`${SITE_URL}/posts/test-post`);
+    expect(item.getElementsByTagName('title')[0].textContent).toBe(
+      'テスト投稿',
+    );
+    expect(item.getElementsByTagName('link')[0].textContent).toBe(
+      `${SITE_URL}/posts/test-post`,
+    );
     expect(item.getElementsByTagName('guid')[0].textContent).toBe('abc123');
-    expect(item.getElementsByTagName('pubDate')[0].textContent).toBe(new Date('2024-05-01T12:00:00Z').toUTCString());
+    expect(item.getElementsByTagName('pubDate')[0].textContent).toBe(
+      new Date('2024-05-01T12:00:00Z').toUTCString(),
+    );
     // descriptionはHTMLタグ除去＋200文字切り詰め
-    expect(item.getElementsByTagName('description')[0].textContent).toBe('これはテスト投稿の本文です。');
+    expect(item.getElementsByTagName('description')[0].textContent).toBe(
+      'これはテスト投稿の本文です。',
+    );
   });
 
   it('投稿が複数の場合、各投稿に対応する<item>タグが正しい順序で含まれる', () => {
@@ -141,8 +151,12 @@ describe('generateRSSFeed', () => {
     const doc = parseXml(rss);
     const items = doc.getElementsByTagName('item');
     expect(items.length).toBe(2);
-    expect(items[0].getElementsByTagName('title')[0].textContent).toBe('最新記事');
-    expect(items[1].getElementsByTagName('title')[0].textContent).toBe('前の記事');
+    expect(items[0].getElementsByTagName('title')[0].textContent).toBe(
+      '最新記事',
+    );
+    expect(items[1].getElementsByTagName('title')[0].textContent).toBe(
+      '前の記事',
+    );
   });
 
   it('titleやcontentにXML特殊文字が含まれる場合、正しくエスケープされる', () => {
@@ -176,7 +190,9 @@ describe('generateRSSFeed', () => {
     expect(rss).toContain('"');
     // <description> もエスケープされている
     const doc = parseXml(rss);
-    const desc = doc.getElementsByTagName('item')[0].getElementsByTagName('description')[0].textContent;
+    const desc = doc
+      .getElementsByTagName('item')[0]
+      .getElementsByTagName('description')[0].textContent;
     expect(desc).toContain('&');
     expect(rss).toContain('<');
     expect(rss).toContain('>');
@@ -209,7 +225,9 @@ describe('generateRSSFeed', () => {
     };
     const rss = generateRSSFeed([post]);
     const doc = parseXml(rss);
-    const desc = doc.getElementsByTagName('item')[0].getElementsByTagName('description')[0].textContent!;
+    const desc = doc
+      .getElementsByTagName('item')[0]
+      .getElementsByTagName('description')[0].textContent!;
     // 200文字＋... で終わる
     expect(desc).toBe('あ'.repeat(200) + '...');
     // HTMLタグが除去されている

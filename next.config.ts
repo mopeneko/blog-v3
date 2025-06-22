@@ -6,7 +6,7 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'mope-blog.assets.newt.so',
+        hostname: 'images.microcms-assets.io',
       },
     ],
   },
@@ -14,5 +14,5 @@ const nextConfig: NextConfig = {
 
 export default nextConfig;
 
-import { initOpenNextCloudflareForDev } from "@opennextjs/cloudflare";
+import { initOpenNextCloudflareForDev } from '@opennextjs/cloudflare';
 initOpenNextCloudflareForDev();
