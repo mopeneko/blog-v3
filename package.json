@@ -37,7 +37,7 @@
     "@types/node": "^24.0.8",
     "@types/react": "19.1.8",
     "@types/react-dom": "19.1.6",
-    "@vitejs/plugin-react": "^4.4.1",
+    "@vitejs/plugin-react": "^4.6.0",
     "daisyui": "^5.0.35",
     "eslint": "^9.30.0",
     "eslint-config-next": "15.3.4",
