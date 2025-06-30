@@ -14,6 +14,6 @@ export default defineConfig({
     environment: 'jsdom',
     globals: true,
     setupFiles: './vitest.setup.ts',
-    env: loadEnv('test', process.cwd(), '')
+    env: loadEnv('test', process.cwd(), ''),
   },
 });

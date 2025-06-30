@@ -3,7 +3,9 @@ import { fetchPostsByTags, fetchTagById } from '@/lib/api/list_posts';
 
 export async function generateMetadata({
   params,
-}: { params: Promise<{ id: string }> }) {
+}: {
+  params: Promise<{ id: string }>;
+}) {
   const id = (await params).id;
   const tag = await fetchTagById(id);
   return {
@@ -30,7 +32,9 @@ export async function generateMetadata({
 
 export default async function TagPage({
   params,
-}: { params: Promise<{ id: string }> }) {
+}: {
+  params: Promise<{ id: string }>;
+}) {
   const id = (await params).id;
   const tag = await fetchTagById(id);
   const posts = await fetchPostsByTags([id]);
