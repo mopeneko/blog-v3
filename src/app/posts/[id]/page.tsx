@@ -16,7 +16,9 @@ import { generatePostJsonLd } from '@/lib/structured-data/post';
 
 export async function generateMetadata({
   params,
-}: { params: Promise<{ id: string }> }): Promise<Metadata> {
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
   const id = (await params).id;
   const post = await fetchPostBySlug(id);
   const image = post.thumbnail
@@ -113,7 +115,9 @@ const formatter = new Intl.DateTimeFormat('ja-JP', {
 
 export default async function Post({
   params,
-}: { params: Promise<{ id: string }> }) {
+}: {
+  params: Promise<{ id: string }>;
+}) {
   const post = await fetchPostBySlug((await params).id);
   const product = post.product && {
     name: post.product.name,
