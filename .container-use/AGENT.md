@@ -1,1 +1,1 @@
-No instructions found. Please look around the filesystem and update me
+Environment for checking and updating Node.js/Bun dependencies. Has bun installed and ready to use for dependency management commands.
