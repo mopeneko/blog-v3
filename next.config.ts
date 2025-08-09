@@ -9,12 +9,7 @@ const nextConfig: NextConfig = {
         hostname: 'mope-blog.assets.newt.so',
       },
     ],
-    loader: "custom",
-    loaderFile: "./image-loader.ts",
   },
 };
 
 export default nextConfig;
-
-import { initOpenNextCloudflareForDev } from '@opennextjs/cloudflare';
-initOpenNextCloudflareForDev();
