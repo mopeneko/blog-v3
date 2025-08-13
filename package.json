@@ -14,7 +14,7 @@
   "dependencies": {
     "lite-youtube-embed": "^0.3.3",
     "newt-client-js": "^3.3.8",
-    "next": "15.3.4",
+    "next": "15.4.6",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "rehype": "^13.0.2",
@@ -35,7 +35,7 @@
     "@vitejs/plugin-react": "^4.6.0",
     "daisyui": "^5.0.43",
     "eslint": "^9.30.0",
-    "eslint-config-next": "15.3.4",
+    "eslint-config-next": "15.4.6",
     "jsdom": "^26.1.0",
     "tailwindcss": "^4.1.11",
     "typescript": "^5",
