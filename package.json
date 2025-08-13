@@ -14,7 +14,7 @@
   "dependencies": {
     "lite-youtube-embed": "^0.3.3",
     "newt-client-js": "^3.3.8",
-    "next": "15.3.4",
+    "next": "15.4.6",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "rehype": "^13.0.2",
