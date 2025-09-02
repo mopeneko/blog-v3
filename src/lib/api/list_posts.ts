@@ -58,7 +58,7 @@ const page = z
     title: z.string(),
     slug: z.string(),
     content: z.string(),
-    thumbnail: z.nullable(image),
+    thumbnail: z.optional(image),
     published_at: z.string(),
     updated_at: z.string(),
   })
