@@ -107,6 +107,23 @@ const rehypeInsertAdsPlugin = () => {
   };
 };
 
+const rehypeLiteYTPlugin = () => {
+  return (tree: Root) => {
+    visit(tree, 'element', (node) => {
+      if (node.tagName === 'p' && node.children[0].type === 'text') {
+        const matches = node.children[0].value.match(/<lite-youtube videoid="([a-zA-z0-9]+)">/);
+        if (!matches) {
+          return
+        }
+
+        node.tagName = 'lite-youtube';
+        node.properties = {videoid: matches[1]};
+        node.children = [];
+      }
+    });
+  };
+};
+
 const formatter = new Intl.DateTimeFormat('ja-JP', {
   year: 'numeric',
   month: '2-digit',
@@ -130,7 +147,7 @@ export default async function Post({
   };
 
   const content = String(
-    await rehype().use(rehypeInsertAdsPlugin).process(post.content),
+    await rehype().use([rehypeInsertAdsPlugin, rehypeLiteYTPlugin]).process(post.content),
   );
 
   const relatedPosts = await fetchPostsByTags(
