@@ -6,7 +6,7 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'mope-blog.assets.newt.so',
+        hostname: 'images.microcms-assets.io',
       },
     ],
   },

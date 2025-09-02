@@ -1,45 +1,23 @@
-import { createClient } from 'newt-client-js';
+import { createClient } from 'microcms-js-sdk';
 import { z } from 'zod';
 
 const content = z.object({
-  _id: z.string(),
-  _sys: z.object({
-    createdAt: z.string(),
-    updatedAt: z.string(),
-    customOrder: z.number(),
-    raw: z.object({
-      createdAt: z.string(),
-      updatedAt: z.string(),
-      firstPublishedAt: z.string(),
-      publishedAt: z.string(),
-    }),
-  }),
+  id: z.string(),
+  createdAt: z.string(),
+  updatedAt: z.string(),
+  publishedAt: z.string().optional(),
+  revisedAt: z.string().optional(),
 });
 
 const image = z.object({
-  _id: z.string(),
-  src: z.string(),
-  fileName: z.string(),
-  fileType: z.string(),
-  fileSize: z.number(),
+  url: z.string(),
   width: z.number(),
   height: z.number(),
-  title: z.string(),
-  description: z.string(),
-  altText: z.string(),
-  metadata: z.record(
-    z.string(),
-    z.union([z.string(), z.number(), z.boolean()]),
-  ),
 });
 
 const link = z.object({
-  _id: z.string(),
-  type: z.string(),
-  data: z.object({
-    text: z.string(),
-    url: z.string(),
-  }),
+  text: z.string(),
+  url: z.string(),
 });
 
 const tag = z.object({ name: z.string() }).merge(content);
@@ -59,7 +37,7 @@ const post = z
   .object({
     title: z.string(),
     slug: z.string(),
-    thumbnail: z.nullable(image),
+    thumbnail: z.optional(image),
     content: z.string(),
     tags: z.array(tag),
     published_at: z.string(),
@@ -69,9 +47,8 @@ const post = z
   .merge(content);
 
 const client = createClient({
-  spaceUid: process.env.NEWT_SPACE_UID!,
-  token: process.env.NEWT_TOKEN!,
-  apiType: process.env.NEWT_API_TYPE as 'api' | 'cdn',
+  serviceDomain: process.env.MICROCMS_SERVICE_DOMAIN!,
+  apiKey: process.env.MICROCMS_API_KEY!,
 });
 
 export type Post = z.infer<typeof post>;
@@ -81,7 +58,7 @@ const page = z
     title: z.string(),
     slug: z.string(),
     content: z.string(),
-    thumbnail: z.nullable(image),
+    thumbnail: z.optional(image),
     published_at: z.string(),
     updated_at: z.string(),
   })
@@ -90,53 +67,55 @@ const page = z
 type Page = z.infer<typeof page>;
 
 export const fetchPosts = async () => {
-  const result = await client.getContents<Post>({
-    appUid: process.env.NEWT_APP_UID!,
-    modelUid: process.env.NEWT_MODEL_UID!,
-    query: {
-      order: ['-published_at'],
+  const result = await client.getList<Post>({
+    endpoint: 'post',
+    queries: {
+      orders: '-published_at',
       depth: 2,
+      limit: 100,
     },
   });
-  return result.items.map((item) => post.parse(item));
+  return result.contents.map((item) => post.parse(item));
 };
 
 export const fetchPostBySlug = async (slug: string) => {
-  const result = await client.getContents<Post>({
-    appUid: process.env.NEWT_APP_UID!,
-    modelUid: process.env.NEWT_MODEL_UID!,
-    query: { slug: { match: slug }, depth: 2 },
+  const result = await client.getList<Post>({
+    endpoint: 'post',
+    queries: {
+      filters: `slug[equals]${slug}`,
+      depth: 2,
+    },
   });
-  return post.parse(result.items[0]);
+  return post.parse(result.contents[0]);
 };
 
 export const fetchPostsByTags = async (tags: string[], limit?: number) => {
-  const result = await client.getContents<Post>({
-    appUid: process.env.NEWT_APP_UID!,
-    modelUid: process.env.NEWT_MODEL_UID!,
-    query: {
-      'tags[in]': tags.join(','),
-      order: ['-published_at'],
+  const result = await client.getList<Post>({
+    endpoint: 'post',
+    queries: {
+      filters: `tags[contains]${tags.join('[or]')}`,
+      orders: '-published_at',
       depth: 2,
       limit,
     },
   });
-  return result.items.map((item) => post.parse(item));
+  return result.contents.map((item) => post.parse(item));
 };
 
 export const fetchPageBySlug = async (slug: string) => {
-  const result = await client.getContents<Page>({
-    appUid: process.env.NEWT_APP_UID!,
-    modelUid: process.env.NEWT_PAGE_MODEL_UID!,
-    query: { slug: { match: slug }, depth: 2 },
+  const result = await client.getList<Page>({
+    endpoint: 'pages',
+    queries: {
+      filters: `slug[equals]${slug}`,
+      depth: 2,
+    },
   });
-  return page.parse(result.items[0]);
+  return page.parse(result.contents[0]);
 };
 
 export const fetchTagById = async (id: string) => {
-  const result = await client.getContent<Tag>({
-    appUid: process.env.NEWT_APP_UID!,
-    modelUid: process.env.NEWT_TAG_MODEL_UID!,
+  const result = await client.get<Tag>({
+    endpoint: 'tag',
     contentId: id,
   });
   return tag.parse(result);

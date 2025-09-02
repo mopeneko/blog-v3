@@ -12,7 +12,7 @@ export async function generateMetadata({
   const page = await fetchPageBySlug(id);
   const image = page.thumbnail
     ? {
-        url: page.thumbnail.src,
+        url: page.thumbnail.url,
         width: page.thumbnail.width,
         height: page.thumbnail.height,
       }
@@ -70,8 +70,8 @@ export default async function Page({
       {page.thumbnail && (
         <NextImage
           className="w-full rounded-lg"
-          src={page.thumbnail.src}
-          alt={page.thumbnail.altText}
+          src={page.thumbnail.url}
+          alt=""
           width={page.thumbnail.width}
           height={page.thumbnail.height}
           loading="eager"

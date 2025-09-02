@@ -18,7 +18,7 @@ export function generateRSSFeed(posts: Post[]): string {
       <item>
         <title>${escapeXml(post.title)}</title>
         <link>${process.env.NEXT_PUBLIC_SITE_URL}/posts/${post.slug}</link>
-        <guid>${post._id}</guid>
+        <guid>${post.id}</guid>
         <pubDate>${new Date(post.published_at).toUTCString()}</pubDate>
         <description>${escapeXml(extractExcerpt(post.content))}</description>
       </item>
