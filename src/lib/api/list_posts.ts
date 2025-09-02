@@ -70,8 +70,9 @@ export const fetchPosts = async () => {
   const result = await client.getList<Post>({
     endpoint: 'post',
     queries: {
-      orders: '-publishedAt',
+      orders: '-published_at',
       depth: 2,
+      limit: 100,
     },
   });
   return result.contents.map((item) => post.parse(item));
@@ -93,7 +94,7 @@ export const fetchPostsByTags = async (tags: string[], limit?: number) => {
     endpoint: 'post',
     queries: {
       filters: `tags[contains]${tags.join('[or]')}`,
-      orders: '-publishedAt',
+      orders: '-published_at',
       depth: 2,
       limit,
     },
