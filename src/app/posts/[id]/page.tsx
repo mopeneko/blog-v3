@@ -183,9 +183,8 @@ export default async function Post({
           <ProductCard
             name={product.name}
             manufacture={product.manufacture}
-            image={
-              product.image
-                ? { src: product.image.url, altText: product.name }
+            image={product.image
+                ? { src: product.image.url, altText: product.name, width: product.image.width, height: product.image.height }
                 : null
             }
             links={product.links}

@@ -3,6 +3,8 @@ import NextImage from 'next/image';
 interface Image {
   src: string;
   altText: string;
+  width: number;
+  height: number;
 }
 
 interface Link {
@@ -30,6 +32,8 @@ export const ProductCard = ({
           className="h-full"
           src={image.src}
           alt={image.altText}
+          width={image.width}
+          height={image.height}
           loading="lazy"
         />
       </figure>

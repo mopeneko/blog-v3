@@ -11,8 +11,8 @@ const content = z.object({
 
 const image = z.object({
   url: z.string(),
-  width: z.number().optional(),
-  height: z.number().optional(),
+  width: z.number(),
+  height: z.number(),
 });
 
 const link = z.object({
