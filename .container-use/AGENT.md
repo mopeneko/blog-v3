@@ -1,0 +1,1 @@
+Environment for checking and updating Node.js/Bun dependencies. Has bun installed and ready to use for dependency management commands.
