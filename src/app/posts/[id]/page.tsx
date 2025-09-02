@@ -111,7 +111,7 @@ const rehypeLiteYTPlugin = () => {
   return (tree: Root) => {
     visit(tree, 'element', (node) => {
       if (node.tagName === 'p' && node.children[0].type === 'text') {
-        const matches = node.children[0].value.match(/<lite-youtube videoid="([a-zA-z0-9]+)">/);
+        const matches = node.children[0].value.match(/<lite-youtube videoid="([a-zA-z0-9_-]+)">/);
         if (!matches) {
           return
         }
