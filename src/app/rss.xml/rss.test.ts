@@ -172,7 +172,7 @@ describe('generateRSSFeed', () => {
   });
 
   it('contentからextractExcerptで概要が抽出され、HTMLタグが除去され200文字で切り詰められる', () => {
-    const longContent = '<p>' + 'あ'.repeat(300) + '</p>';
+    const longContent = `<p>${'あ'.repeat(300)}</p>`;
     const post: Post = {
       id: 'id4',
       title: '長文テスト',
@@ -192,9 +192,9 @@ describe('generateRSSFeed', () => {
     const doc = parseXml(rss);
     const desc = doc
       .getElementsByTagName('item')[0]
-      .getElementsByTagName('description')[0].textContent!;
+      .getElementsByTagName('description')[0].textContent;
     // 200文字＋... で終わる
-    expect(desc).toBe('あ'.repeat(200) + '...');
+    expect(desc).toBe(`${'あ'.repeat(200)}...`);
     // HTMLタグが除去されている
     expect(desc).not.toContain('<');
     expect(desc).not.toContain('>');

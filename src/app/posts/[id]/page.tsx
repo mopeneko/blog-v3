@@ -1,17 +1,16 @@
-import { ProductCard } from '@/components/ProductCard';
-import { RelatedArticleCard } from '@/components/RelatedArticleCard';
-import { Tag as TagComponent } from '@/components/Tag';
-import { fetchPostsByTags } from '@/lib/api/list_posts';
-import { fetchPostBySlug } from '@/lib/api/list_posts';
+import type { Root } from 'hast';
+import type { Metadata } from 'next';
+import 'lite-youtube-embed/src/lite-yt-embed.css';
 import NextImage from 'next/image';
 import NextLink from 'next/link';
 import React from 'react';
-import { Root } from 'hast';
-import { Metadata } from 'next';
 import { rehype } from 'rehype';
 import { visit } from 'unist-util-visit';
 import { LiteYTEmbed } from '@/components/LiteYTEmbed';
-import 'lite-youtube-embed/src/lite-yt-embed.css';
+import { ProductCard } from '@/components/ProductCard';
+import { RelatedArticleCard } from '@/components/RelatedArticleCard';
+import { Tag as TagComponent } from '@/components/Tag';
+import { fetchPostBySlug, fetchPostsByTags } from '@/lib/api/list_posts';
 import { generatePostJsonLd } from '@/lib/structured-data/post';
 
 export async function generateMetadata({
@@ -111,13 +110,15 @@ const rehypeLiteYTPlugin = () => {
   return (tree: Root) => {
     visit(tree, 'element', (node) => {
       if (node.tagName === 'p' && node.children[0].type === 'text') {
-        const matches = node.children[0].value.match(/<lite-youtube videoid="([a-zA-z0-9_-]+)">/);
+        const matches = node.children[0].value.match(
+          /<lite-youtube videoid="([a-zA-z0-9_-]+)">/,
+        );
         if (!matches) {
-          return
+          return;
         }
 
         node.tagName = 'lite-youtube';
-        node.properties = {videoid: matches[1]};
+        node.properties = { videoid: matches[1] };
         node.children = [];
       }
     });
@@ -147,7 +148,9 @@ export default async function Post({
   };
 
   const content = String(
-    await rehype().use([rehypeInsertAdsPlugin, rehypeLiteYTPlugin]).process(post.content),
+    await rehype()
+      .use([rehypeInsertAdsPlugin, rehypeLiteYTPlugin])
+      .process(post.content),
   );
 
   const relatedPosts = await fetchPostsByTags(
@@ -193,6 +196,7 @@ export default async function Post({
 
         <div
           className="prose w-full m-auto"
+          // biome-ignore lint/security/noDangerouslySetInnerHtml: Article content
           dangerouslySetInnerHTML={{ __html: content }}
         />
 
@@ -200,8 +204,14 @@ export default async function Post({
           <ProductCard
             name={product.name}
             manufacture={product.manufacture}
-            image={product.image
-                ? { src: product.image.url, altText: product.name, width: product.image.width, height: product.image.height }
+            image={
+              product.image
+                ? {
+                    src: product.image.url,
+                    altText: product.name,
+                    width: product.image.width,
+                    height: product.image.height,
+                  }
                 : null
             }
             links={product.links}
@@ -227,8 +237,9 @@ export default async function Post({
           data-ad-format="autorelaxed"
           data-ad-client="ca-pub-3857753364740983"
           data-ad-slot="3205804455"
-        ></ins>
+        />
         <script
+          // biome-ignore lint/security/noDangerouslySetInnerHtml: For Google AdSense ad unit
           dangerouslySetInnerHTML={{
             __html: '(adsbygoogle = window.adsbygoogle || []).push({});',
           }}
@@ -237,6 +248,7 @@ export default async function Post({
 
       <script
         type="application/ld+json"
+        // biome-ignore lint/security/noDangerouslySetInnerHtml: Structured Data
         dangerouslySetInnerHTML={{
           __html: JSON.stringify(
             generatePostJsonLd({

@@ -1,6 +1,7 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 @plugin "daisyui" {
+  /* biome-ignore lint/correctness/noUnknownProperty: daisyUI theme */
   themes:
     light --default,
     dark --prefersdark,
