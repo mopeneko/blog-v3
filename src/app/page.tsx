@@ -1,6 +1,6 @@
+import React from 'react';
 import { ArticleCard } from '@/components/ArticleCard';
 import { fetchPosts } from '@/lib/api/list_posts';
-import React from 'react';
 
 export default async function Home() {
   const posts = await fetchPosts();
@@ -44,8 +44,9 @@ export default async function Home() {
                 data-ad-layout-key="-7c+eo+1+2-5"
                 data-ad-client="ca-pub-3857753364740983"
                 data-ad-slot="5385219852"
-              ></ins>
+              />
               <script
+                // biome-ignore lint/security/noDangerouslySetInnerHtml: For Google AdSense ad unit
                 dangerouslySetInnerHTML={{
                   __html: '(adsbygoogle = window.adsbygoogle || []).push({});',
                 }}

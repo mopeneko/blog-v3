@@ -7,5 +7,6 @@ export const LiteYTEmbed = () => {
     // @ts-expect-error no declaration file
     import('lite-youtube-embed/src/lite-yt-embed.js');
   }, []);
-  return <></>;
+  // biome-ignore lint/complexity/noUselessFragments: Should be a component
+  return <></>
 };

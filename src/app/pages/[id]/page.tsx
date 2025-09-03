@@ -1,7 +1,6 @@
-import { fetchPageBySlug } from '@/lib/api/list_posts';
-import { Metadata } from 'next';
+import type { Metadata } from 'next';
 import NextImage from 'next/image';
-import React from 'react';
+import { fetchPageBySlug } from '@/lib/api/list_posts';
 
 export async function generateMetadata({
   params,
@@ -80,6 +79,7 @@ export default async function Page({
 
       <div
         className="prose w-full m-auto"
+        // biome-ignore lint/security/noDangerouslySetInnerHtml: Article content
         dangerouslySetInnerHTML={{ __html: page.content }}
       />
     </article>
