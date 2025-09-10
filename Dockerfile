@@ -1,6 +1,6 @@
-FROM oven/bun:1.2 AS base
+ARG BUN_VERSION=1.2
 
-FROM base AS builder
+FROM oven/bun:$BUN_VERSION AS builder
 
 WORKDIR /app
 
@@ -22,7 +22,7 @@ ENV MICROCMS_API_KEY=${MICROCMS_API_KEY}
 
 RUN bun run build
 
-FROM base AS runner
+FROM oven/bun:$BUN_VERSION-distroless
 
 WORKDIR /app
 
@@ -34,4 +34,4 @@ COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 
-CMD [ "bun", "server.js" ]
+CMD [ "server.js" ]
