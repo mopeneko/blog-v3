@@ -51,6 +51,10 @@ const client = createClient({
   apiKey: process.env.MICROCMS_API_KEY ?? '',
 });
 
+const ENDPOINT_POST = 'post';
+const ENDPOINT_PAGES = 'pages';
+const ENDPOINT_TAG = 'tag';
+
 export type Post = z.infer<typeof post>;
 
 const page = z
@@ -68,7 +72,7 @@ type Page = z.infer<typeof page>;
 
 export const fetchPosts = async () => {
   const result = await client.getList<Post>({
-    endpoint: 'post',
+    endpoint: ENDPOINT_POST,
     queries: {
       orders: '-published_at',
       depth: 2,
@@ -80,7 +84,7 @@ export const fetchPosts = async () => {
 
 export const fetchPostBySlug = async (slug: string) => {
   const result = await client.getList<Post>({
-    endpoint: 'post',
+    endpoint: ENDPOINT_POST,
     queries: {
       filters: `slug[equals]${slug}`,
       depth: 2,
@@ -91,7 +95,7 @@ export const fetchPostBySlug = async (slug: string) => {
 
 export const fetchPostsByTags = async (tags: string[], limit?: number) => {
   const result = await client.getList<Post>({
-    endpoint: 'post',
+    endpoint: ENDPOINT_POST,
     queries: {
       filters: `tags[contains]${tags.join('[or]')}`,
       orders: '-published_at',
@@ -104,7 +108,7 @@ export const fetchPostsByTags = async (tags: string[], limit?: number) => {
 
 export const fetchPageBySlug = async (slug: string) => {
   const result = await client.getList<Page>({
-    endpoint: 'pages',
+    endpoint: ENDPOINT_PAGES,
     queries: {
       filters: `slug[equals]${slug}`,
       depth: 2,
@@ -115,7 +119,7 @@ export const fetchPageBySlug = async (slug: string) => {
 
 export const fetchTagById = async (id: string) => {
   const result = await client.get<Tag>({
-    endpoint: 'tag',
+    endpoint: ENDPOINT_TAG,
     contentId: id,
   });
   return tag.parse(result);
