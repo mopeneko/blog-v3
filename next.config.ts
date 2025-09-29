@@ -11,6 +11,14 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async rewrites() {
+    return [
+      {
+        source: '/XpvJpm7N.js',
+        destination: 'https://cloud.umami.is/script.js',
+      },
+    ];
+  }
 };
 
 export default nextConfig;
