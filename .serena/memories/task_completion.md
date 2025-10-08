@@ -1,0 +1,3 @@
+- After edits, ensure formatting/lint via `npm run lint` (or `npm run lint:fix` if needed) and `npm run format` for targeted files.
+- Run unit tests with `npm run test`; consider `npm run build` to verify Next.js build when touching routing/config or data fetching.
+- Review `.env` requirements (MICROCMS_* keys, NEXT_PUBLIC_SITE_URL) before shipping features relying on external APIs.
