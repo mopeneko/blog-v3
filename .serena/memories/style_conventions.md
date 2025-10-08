@@ -1,0 +1,5 @@
+- TypeScript strict mode enabled; use the `@/*` path alias for src imports.
+- Prefer async/await with server components in App Router; keep UI in `src/components` with typed props.
+- Formatting/linting handled by Biome (`biome.json`): single quotes, space indentation, enforce single declarators and self-closing JSX when possible.
+- Tailwind CSS v4 with daisyUI themes declared in `src/app/globals.css`; leverage utility classes instead of custom CSS when feasible.
+- Validate external data (e.g., microCMS responses) with Zod schemas before use to match existing patterns.

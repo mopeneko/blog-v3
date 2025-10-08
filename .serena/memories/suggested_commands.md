@@ -1,0 +1,6 @@
+- Install deps: `bun install` (or `npm install` if Bun unavailable).
+- Start dev server with Turbopack: `npm run dev`.
+- Production build & preview: `npm run build` then `npm run start`.
+- Lint check / autofix (Biome): `npm run lint` / `npm run lint:fix`.
+- Format files via Biome: `npm run format`.
+- Run unit tests: `npm run test`; interactive UI: `npm run test:ui`.

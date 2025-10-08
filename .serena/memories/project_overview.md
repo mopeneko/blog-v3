@@ -1,0 +1,5 @@
+- Next.js 15 App Router blog for "もぺブログ", built with React 19 and TypeScript.
+- Fetches content from microCMS via `microcms-js-sdk`, validating responses with Zod (`src/lib/api`).
+- Styling uses Tailwind CSS v4 and daisyUI themes, plus custom components under `src/components`.
+- App routes live in `src/app` (home, posts, pages, tags, RSS handler), shared utilities under `src/lib/structured-data`.
+- Config highlights: `next.config.ts` enables standalone output and remote image domain, layout injects ads/analytics scripts in production.
