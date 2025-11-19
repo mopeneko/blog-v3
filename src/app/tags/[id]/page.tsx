@@ -8,6 +8,7 @@ import {
   Inset,
   Text,
 } from '@radix-ui/themes';
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { fetchPostsByTags, fetchTagById } from '@/lib/api/list_posts';
 import type { Article } from '@/lib/article';
@@ -19,6 +20,33 @@ const formatDate = (date: string) =>
     month: 'short',
     day: 'numeric',
   });
+
+export async function generateMetadata(
+  props: PageProps<'/tags/[id]'>,
+): Promise<Metadata> {
+  const { id } = await props.params;
+  const tag = await fetchTagById(id);
+  return {
+    title: `${tag.name} - もぺブログ`,
+    twitter: {
+      card: 'summary',
+      site: '@nkyna_',
+      creator: '@nkyna_',
+      title: `${tag.name} - もぺブログ`,
+    },
+    openGraph: {
+      type: 'website',
+      url: `${process.env.NEXT_PUBLIC_SITE_URL}/tags/${id}`,
+      title: `${tag.name} - もぺブログ`,
+      siteName: 'もぺブログ',
+    },
+    alternates: {
+      types: {
+        'application/rss+xml': `${process.env.NEXT_PUBLIC_SITE_URL}/rss.xml`,
+      },
+    },
+  };
+}
 
 export default async function TagPage(props: PageProps<'/tags/[id]'>) {
   const { id } = await props.params;

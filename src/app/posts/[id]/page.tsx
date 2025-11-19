@@ -8,6 +8,7 @@ import {
   Inset,
   Text,
 } from '@radix-ui/themes';
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
@@ -15,6 +16,7 @@ import type { Article } from '@/lib/article';
 import type { ArticleDetail } from '@/lib/articleDetails';
 import styles from './page.module.css';
 import { fetchPostBySlug, fetchPostsByTags } from '@/lib/api/list_posts';
+import { generatePostJsonLd } from '@/lib/structured-data/post';
 
 const formatDate = (date: string) =>
   new Date(date).toLocaleDateString('ja-JP', {
@@ -22,6 +24,42 @@ const formatDate = (date: string) =>
     month: 'short',
     day: 'numeric',
   });
+
+export async function generateMetadata(
+  props: PageProps<'/posts/[id]'>,
+): Promise<Metadata> {
+  const { id } = await props.params;
+  const post = await fetchPostBySlug(id);
+  const image = post.thumbnail
+    ? {
+        url: post.thumbnail.url,
+        width: post.thumbnail.width,
+        height: post.thumbnail.height,
+      }
+    : undefined;
+  return {
+    title: `${post.title} - もぺブログ`,
+    openGraph: {
+      type: 'website',
+      url: `${process.env.NEXT_PUBLIC_SITE_URL}/posts/${id}`,
+      title: `${post.title} - もぺブログ`,
+      siteName: 'もぺブログ',
+      images: image,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      site: '@nkyna_',
+      creator: '@nkyna_',
+      title: `${post.title} - もぺブログ`,
+      images: image,
+    },
+    alternates: {
+      types: {
+        'application/rss+xml': `${process.env.NEXT_PUBLIC_SITE_URL}/rss.xml`,
+      },
+    },
+  };
+}
 
 export default async function PostPage(props: PageProps<'/posts/[id]'>) {
   const { id } = await props.params;
@@ -69,140 +107,158 @@ export default async function PostPage(props: PageProps<'/posts/[id]'>) {
     : undefined;
 
   return (
-    <Box className={styles.pageContainer}>
-      <Box style={{ maxWidth: '900px', margin: '0 auto' }}>
-        <Flex direction="column" gap="5">
-          <Card variant="surface" size="4" className={styles.heroCard}>
-            <Flex direction="column" gap="4">
-              <Inset clip="padding-box" side="top" pb="current">
-                <Box className={styles.cover} style={heroThumbnailStyle}>
-                  <Box style={{ paddingTop: '38%' }} />
-                </Box>
-              </Inset>
+    <>
+      <Box className={styles.pageContainer}>
+        <Box style={{ maxWidth: '900px', margin: '0 auto' }}>
+          <Flex direction="column" gap="5">
+            <Card variant="surface" size="4" className={styles.heroCard}>
+              <Flex direction="column" gap="4">
+                <Inset clip="padding-box" side="top" pb="current">
+                  <Box className={styles.cover} style={heroThumbnailStyle}>
+                    <Box style={{ paddingTop: '38%' }} />
+                  </Box>
+                </Inset>
 
-              <Flex direction={{ initial: 'column', sm: 'row' }} gap="3">
-                <Flex gap="2" wrap="wrap">
-                  {detail.tags.map((tag) => (
-                    <Badge
-                      key={tag.id}
-                      color="cyan"
-                      variant="soft"
-                      radius="medium"
-                      className={styles.tagBadge}
-                      asChild
-                    >
-                      <Link href={`/tags/${encodeURIComponent(tag.id)}`}>
-                        {tag.label}
-                      </Link>
-                    </Badge>
-                  ))}
-                </Flex>
-                <Flex
-                  gap="3"
-                  align="center"
-                  wrap="wrap"
-                  className={styles.meta}
-                >
-                  <Text color="gray" size="2">
-                    公開: {formatDate(detail.date)}
-                  </Text>
-                  <Text color="gray" size="2" className={styles.metaDivider}>
-                    ／
-                  </Text>
-                  <Text color="gray" size="2">
-                    更新: {formatDate(detail.updated)}
-                  </Text>
-                </Flex>
-              </Flex>
-
-              <Flex direction="column" gap="2">
-                <Text weight="medium" color="cyan">
-                  {'Post'}
-                </Text>
-                <Heading size="8">{detail.title}</Heading>
-              </Flex>
-            </Flex>
-          </Card>
-
-          <Card variant="surface" size="4" className={styles.bodyCard}>
-            <Box
-              className={styles.articleHtml}
-              // biome-ignore lint/security/noDangerouslySetInnerHtml: CMSが記事本文をHTMLで返すため
-              dangerouslySetInnerHTML={{ __html: detail.content }}
-            />
-          </Card>
-
-          {relatedArticles.length > 0 ? (
-            <Flex direction="column" gap="3">
-              <Flex direction="column" gap="1">
-                <Text weight="medium" color="cyan">
-                  {'Related'}
-                </Text>
-                <Heading size="6">関連記事</Heading>
-                <Text color="gray">
-                  同じテーマの読み物を3件までピックアップしました。
-                </Text>
-              </Flex>
-
-              <Grid columns={{ initial: '1', sm: '2', md: '3' }} gap="4">
-                {relatedArticles.map((related) => (
-                  <Card
-                    key={related.slug}
-                    variant="surface"
-                    size="3"
-                    asChild
-                    className={styles.relatedCard}
+                <Flex direction={{ initial: 'column', sm: 'row' }} gap="3">
+                  <Flex gap="2" wrap="wrap">
+                    {detail.tags.map((tag) => (
+                      <Badge
+                        key={tag.id}
+                        color="cyan"
+                        variant="soft"
+                        radius="medium"
+                        className={styles.tagBadge}
+                        asChild
+                      >
+                        <Link href={`/tags/${encodeURIComponent(tag.id)}`}>
+                          {tag.label}
+                        </Link>
+                      </Badge>
+                    ))}
+                  </Flex>
+                  <Flex
+                    gap="3"
+                    align="center"
+                    wrap="wrap"
+                    className={styles.meta}
                   >
-                    <Link
-                      href={`/posts/${related.slug}`}
-                      style={{ color: 'inherit', textDecoration: 'none' }}
+                    <Text color="gray" size="2">
+                      公開: {formatDate(detail.date)}
+                    </Text>
+                    <Text color="gray" size="2" className={styles.metaDivider}>
+                      ／
+                    </Text>
+                    <Text color="gray" size="2">
+                      更新: {formatDate(detail.updated)}
+                    </Text>
+                  </Flex>
+                </Flex>
+
+                <Flex direction="column" gap="2">
+                  <Text weight="medium" color="cyan">
+                    {'Post'}
+                  </Text>
+                  <Heading size="8">{detail.title}</Heading>
+                </Flex>
+              </Flex>
+            </Card>
+
+            <Card variant="surface" size="4" className={styles.bodyCard}>
+              <Box
+                className={styles.articleHtml}
+                // biome-ignore lint/security/noDangerouslySetInnerHtml: CMSが記事本文をHTMLで返すため
+                dangerouslySetInnerHTML={{ __html: detail.content }}
+              />
+            </Card>
+
+            {relatedArticles.length > 0 ? (
+              <Flex direction="column" gap="3">
+                <Flex direction="column" gap="1">
+                  <Text weight="medium" color="cyan">
+                    {'Related'}
+                  </Text>
+                  <Heading size="6">関連記事</Heading>
+                  <Text color="gray">
+                    同じテーマの読み物を3件までピックアップしました。
+                  </Text>
+                </Flex>
+
+                <Grid columns={{ initial: '1', sm: '2', md: '3' }} gap="4">
+                  {relatedArticles.map((related) => (
+                    <Card
+                      key={related.slug}
+                      variant="surface"
+                      size="3"
+                      asChild
+                      className={styles.relatedCard}
                     >
-                      <Flex direction="column" gap="3">
-                        <Inset clip="padding-box" side="top" pb="current">
-                          <Box
-                            className={styles.relatedCover}
-                            style={
-                              related.thumbnailUrl
-                                ? {
-                                    backgroundImage: `url(${related.thumbnailUrl})`,
-                                    backgroundSize: 'cover',
-                                    backgroundPosition: 'center',
-                                    backgroundRepeat: 'no-repeat',
-                                  }
-                                : undefined
-                            }
-                          >
-                            <Box style={{ paddingTop: '52%' }} />
-                          </Box>
-                        </Inset>
-                        <Flex direction="column" gap="1">
-                          <Heading size="4">{related.title}</Heading>
-                          <Text color="gray" size="2">
-                            {formatDate(related.date)}
-                          </Text>
-                        </Flex>
-                        <Flex gap="2" wrap="wrap">
-                          {related.tags.map((tag) => (
-                            <Badge
-                              key={tag.id}
-                              color="cyan"
-                              variant="soft"
-                              radius="medium"
-                              className={styles.tagBadge}
+                      <Link
+                        href={`/posts/${related.slug}`}
+                        style={{ color: 'inherit', textDecoration: 'none' }}
+                      >
+                        <Flex direction="column" gap="3">
+                          <Inset clip="padding-box" side="top" pb="current">
+                            <Box
+                              className={styles.relatedCover}
+                              style={
+                                related.thumbnailUrl
+                                  ? {
+                                      backgroundImage: `url(${related.thumbnailUrl})`,
+                                      backgroundSize: 'cover',
+                                      backgroundPosition: 'center',
+                                      backgroundRepeat: 'no-repeat',
+                                    }
+                                  : undefined
+                              }
                             >
-                              {tag.label}
-                            </Badge>
-                          ))}
+                              <Box style={{ paddingTop: '52%' }} />
+                            </Box>
+                          </Inset>
+                          <Flex direction="column" gap="1">
+                            <Heading size="4">{related.title}</Heading>
+                            <Text color="gray" size="2">
+                              {formatDate(related.date)}
+                            </Text>
+                          </Flex>
+                          <Flex gap="2" wrap="wrap">
+                            {related.tags.map((tag) => (
+                              <Badge
+                                key={tag.id}
+                                color="cyan"
+                                variant="soft"
+                                radius="medium"
+                                className={styles.tagBadge}
+                              >
+                                {tag.label}
+                              </Badge>
+                            ))}
+                          </Flex>
                         </Flex>
-                      </Flex>
-                    </Link>
-                  </Card>
-                ))}
-              </Grid>
-            </Flex>
-          ) : null}
-        </Flex>
+                      </Link>
+                    </Card>
+                  ))}
+                </Grid>
+              </Flex>
+            ) : null}
+          </Flex>
+        </Box>
       </Box>
-    </Box>
+
+      <script
+        type="application/ld+json"
+        // biome-ignore lint/security/noDangerouslySetInnerHtml: Structured Data
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(
+            generatePostJsonLd({
+              title: apiArticle.title,
+              slug: apiArticle.slug,
+              thumbnail: apiArticle.thumbnail?.url,
+              publishedAt: apiArticle.published_at,
+              updatedAt: apiArticle.updated_at,
+            }),
+          ),
+        }}
+      />
+    </>
   );
 }
