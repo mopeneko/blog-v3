@@ -1,8 +1,7 @@
 import type { Metadata } from 'next';
-import './globals.css';
-import { NavBar } from '@/components/NavBar';
-import { Footer } from '@/components/Footer';
 import Script from 'next/script';
+import '@radix-ui/themes/styles.css';
+import { Theme } from '@radix-ui/themes';
 
 export const metadata: Metadata = {
   title: 'もぺブログ',
@@ -33,11 +32,7 @@ export default function RootLayout({
   return (
     <html lang="ja" data-theme="pastel">
       <body>
-        <div className="flex flex-col gap-4">
-          <NavBar />
-          {children}
-          <Footer className="mb-4" />
-        </div>
+        <Theme>{children}</Theme>
         {process.env.NODE_ENV === 'production' && (
           <>
             <Script
