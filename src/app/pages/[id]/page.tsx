@@ -1,6 +1,9 @@
+import { Box, Card, Flex, Heading, Inset, Text } from '@radix-ui/themes';
 import type { Metadata } from 'next';
-import NextImage from 'next/image';
 import { fetchPageBySlug } from '@/lib/api/list_posts';
+import type { ArticleDetail } from '@/lib/articleDetails';
+import { notFound } from 'next/navigation';
+import styles from './page.module.css';
 
 export async function generateMetadata({
   params,
@@ -40,48 +43,94 @@ export async function generateMetadata({
   };
 }
 
+const formatDate = (date: string) =>
+  new Date(date).toLocaleDateString('ja-JP', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  });
+
 const formatter = new Intl.DateTimeFormat('ja-JP', {
   year: 'numeric',
   month: '2-digit',
   day: '2-digit',
 });
 
-export default async function Page({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const page = await fetchPageBySlug((await params).id);
+export default async function Page(props: PageProps<'/pages/[id]'>) {
+  const { id } = await props.params;
+  const apiPage = await fetchPageBySlug(id);
+  const detail: ArticleDetail = {
+    title: apiPage.title,
+    slug: apiPage.slug,
+    date: apiPage.published_at,
+    updated: apiPage.updated_at,
+    tags: [],
+    thumbnailUrl: apiPage.thumbnail?.url,
+    content: apiPage.content,
+  };
+
+  if (!detail) {
+    notFound();
+  }
+
+  const heroThumbnailStyle = detail.thumbnailUrl
+    ? {
+        backgroundImage: `url(${detail.thumbnailUrl})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+      }
+    : undefined;
 
   return (
-    <article className="max-w-lg mx-auto px-2 flex flex-col gap-y-4">
-      <h1 className="text-2xl font-bold">{page.title}</h1>
+    <Box className={styles.pageContainer}>
+      <Box style={{ maxWidth: '900px', margin: '0 auto' }}>
+        <Flex direction="column" gap="5">
+          <Card variant="surface" size="4" className={styles.heroCard}>
+            <Flex direction="column" gap="4">
+              <Inset clip="padding-box" side="top" pb="current">
+                <Box className={styles.cover} style={heroThumbnailStyle}>
+                  <Box style={{ paddingTop: '38%' }} />
+                </Box>
+              </Inset>
 
-      <div className="grid grid-row-1 gap-y-2">
-        <div className="text-xs text-right">
-          <div>
-            Published on {formatter.format(new Date(page.published_at))}
-          </div>
-          <div>Updated on {formatter.format(new Date(page.updated_at))}</div>
-        </div>
-      </div>
+              <Flex direction={{ initial: 'column', sm: 'row' }} gap="3">
+                <Flex
+                  gap="3"
+                  align="center"
+                  wrap="wrap"
+                  className={styles.meta}
+                >
+                  <Text color="gray" size="2">
+                    公開: {formatDate(detail.date)}
+                  </Text>
+                  <Text color="gray" size="2" className={styles.metaDivider}>
+                    ／
+                  </Text>
+                  <Text color="gray" size="2">
+                    更新: {formatDate(detail.updated)}
+                  </Text>
+                </Flex>
+              </Flex>
 
-      {page.thumbnail && (
-        <NextImage
-          className="w-full rounded-lg"
-          src={page.thumbnail.url}
-          alt=""
-          width={page.thumbnail.width}
-          height={page.thumbnail.height}
-          loading="eager"
-        />
-      )}
+              <Flex direction="column" gap="2">
+                <Text weight="medium" color="cyan">
+                  {'Post'}
+                </Text>
+                <Heading size="8">{detail.title}</Heading>
+              </Flex>
+            </Flex>
+          </Card>
 
-      <div
-        className="prose w-full m-auto"
-        // biome-ignore lint/security/noDangerouslySetInnerHtml: Article content
-        dangerouslySetInnerHTML={{ __html: page.content }}
-      />
-    </article>
+          <Card variant="surface" size="4" className={styles.bodyCard}>
+            <Box
+              className={styles.articleHtml}
+              // biome-ignore lint/security/noDangerouslySetInnerHtml: CMSから記事本文がHTMLで返されるため
+              dangerouslySetInnerHTML={{ __html: detail.content }}
+            />
+          </Card>
+        </Flex>
+      </Box>
+    </Box>
   );
 }
