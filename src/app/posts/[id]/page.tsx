@@ -172,6 +172,7 @@ export default async function PostPage(props: PageProps<'/posts/[id]'>) {
 
   const apiRelatedArticles = await fetchPostsByTags(
     apiArticle.tags.map((tag) => tag.id),
+    3,
   );
 
   const relatedArticles: Article[] = apiRelatedArticles.map((article) => ({
