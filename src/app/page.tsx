@@ -41,12 +41,9 @@ export default async function Home() {
         <Flex direction="column" gap="4">
           <Flex direction="column" gap="2">
             <Text weight="medium" color="cyan">
-              {'Journal'}
+              {'もぺブログ'}
             </Text>
             <Heading size="8">最新の記事</Heading>
-            <Text color="gray">
-              デザインと実装のメモを、水色ベースの落ち着いたカードでまとめました。
-            </Text>
           </Flex>
 
           <Grid columns={{ initial: '1', sm: '2', md: '3' }} gap="4">
