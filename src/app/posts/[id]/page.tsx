@@ -1,6 +1,7 @@
 import {
   Badge,
   Box,
+  Button,
   Card,
   Flex,
   Grid,
@@ -22,6 +23,8 @@ import { LiteYTEmbed } from '@/components/LiteYTEmbed';
 import type { Root } from 'hast';
 import { visit } from 'unist-util-visit';
 import { rehype } from 'rehype';
+import type { AffiliateProduct } from '@/lib/affiliateProducts';
+import Image from 'next/image';
 
 const formatDate = (date: string) =>
   new Date(date).toLocaleDateString('ja-JP', {
@@ -182,6 +185,18 @@ export default async function PostPage(props: PageProps<'/posts/[id]'>) {
     thumbnailUrl: article.thumbnail?.url,
   }));
 
+  const affiliateProduct: AffiliateProduct | undefined = apiArticle.product
+    ? {
+        name: apiArticle.product.name,
+        maker: apiArticle.product.manufacture,
+        thumbnailUrl: apiArticle.product.image?.url ?? '',
+        links: apiArticle.product.links.map((link) => ({
+          href: link.url,
+          label: link.text,
+        })),
+      }
+    : undefined;
+
   const heroThumbnailStyle = detail.thumbnailUrl
     ? {
         backgroundImage: `url(${detail.thumbnailUrl})`,
@@ -255,6 +270,67 @@ export default async function PostPage(props: PageProps<'/posts/[id]'>) {
                 dangerouslySetInnerHTML={{ __html: content }}
               />
             </Card>
+
+            {affiliateProduct ? (
+              <Flex
+                direction="column"
+                gap="2"
+                className={styles.affiliateSection}
+              >
+                <Text size="2" color="gray" className={styles.affiliateLabel}>
+                  スポンサーリンク
+                </Text>
+                <Card
+                  variant="surface"
+                  size="4"
+                  className={styles.affiliateCard}
+                >
+                  <Flex
+                    direction={{ initial: 'column', sm: 'row' }}
+                    gap="4"
+                    align="center"
+                  >
+                    <Box className={styles.affiliateThumbnail}>
+                      <Image
+                        width={128}
+                        height={128}
+                        src={affiliateProduct.thumbnailUrl}
+                        alt={affiliateProduct.name}
+                      />
+                    </Box>
+                    <Flex direction="column" gap="3" style={{ flexGrow: 1 }}>
+                      <Flex direction="column" gap="1">
+                        <Heading size="5">{affiliateProduct.name}</Heading>
+                        <Text color="gray" size="2">
+                          メーカー: {affiliateProduct.maker}
+                        </Text>
+                      </Flex>
+                      {affiliateProduct.links.length > 0 ? (
+                        <Flex gap="2" wrap="wrap">
+                          {affiliateProduct.links.map((link) => (
+                            <Button
+                              key={link.href}
+                              color="cyan"
+                              size="3"
+                              radius="large"
+                              asChild
+                            >
+                              <Link
+                                href={link.href}
+                                target="_blank"
+                                rel="noreferrer noopener"
+                              >
+                                {link.label}
+                              </Link>
+                            </Button>
+                          ))}
+                        </Flex>
+                      ) : null}
+                    </Flex>
+                  </Flex>
+                </Card>
+              </Flex>
+            ) : null}
 
             {relatedArticles.length > 0 ? (
               <Flex direction="column" gap="3">
