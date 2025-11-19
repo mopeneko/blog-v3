@@ -9,6 +9,7 @@ import {
   Text,
 } from '@radix-ui/themes';
 import type { Metadata } from 'next';
+import 'lite-youtube-embed/src/lite-yt-embed.css';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
@@ -17,6 +18,10 @@ import type { ArticleDetail } from '@/lib/articleDetails';
 import styles from './page.module.css';
 import { fetchPostBySlug, fetchPostsByTags } from '@/lib/api/list_posts';
 import { generatePostJsonLd } from '@/lib/structured-data/post';
+import { LiteYTEmbed } from '@/components/LiteYTEmbed';
+import type { Root } from 'hast';
+import { visit } from 'unist-util-visit';
+import { rehype } from 'rehype';
 
 const formatDate = (date: string) =>
   new Date(date).toLocaleDateString('ja-JP', {
@@ -24,6 +29,80 @@ const formatDate = (date: string) =>
     month: 'short',
     day: 'numeric',
   });
+
+const rehypeInsertAdsPlugin = () => {
+  let count = 0;
+
+  return (tree: Root) => {
+    visit(tree, 'element', (node) => {
+      if (node.tagName !== 'h2' || node.properties?.['ad-heading']) {
+        return;
+      }
+
+      count++;
+      if (count !== 2) {
+        return;
+      }
+
+      const headingText = node.children[0];
+
+      node.tagName = 'div';
+      node.children = [
+        {
+          type: 'element',
+          tagName: 'ins',
+          properties: {
+            className: 'adsbygoogle',
+            style: 'display:block; text-align:center;',
+            'data-ad-layout': 'in-article',
+            'data-ad-format': 'fluid',
+            'data-ad-client': 'ca-pub-3857753364740983',
+            'data-ad-slot': '1281498636',
+          },
+          children: [],
+        },
+        {
+          type: 'element',
+          tagName: 'script',
+          properties: {},
+          children: [
+            {
+              type: 'text',
+              value: '(adsbygoogle = window.adsbygoogle || []).push({});',
+            },
+          ],
+        },
+        {
+          type: 'element',
+          tagName: 'h2',
+          properties: {
+            'ad-heading': true,
+          },
+          children: [headingText],
+        },
+      ];
+    });
+  };
+};
+
+const rehypeLiteYTPlugin = () => {
+  return (tree: Root) => {
+    visit(tree, 'element', (node) => {
+      if (node.tagName === 'p' && node.children[0].type === 'text') {
+        const matches = node.children[0].value.match(
+          /<lite-youtube videoid="([a-zA-z0-9_-]+)">/,
+        );
+        if (!matches) {
+          return;
+        }
+
+        node.tagName = 'lite-youtube';
+        node.properties = { videoid: matches[1] };
+        node.children = [];
+      }
+    });
+  };
+};
 
 export async function generateMetadata(
   props: PageProps<'/posts/[id]'>,
@@ -81,6 +160,12 @@ export default async function PostPage(props: PageProps<'/posts/[id]'>) {
   if (!detail) {
     notFound();
   }
+
+  const content = String(
+    await rehype()
+      .use([rehypeInsertAdsPlugin, rehypeLiteYTPlugin])
+      .process(detail.content),
+  );
 
   const apiRelatedArticles = await fetchPostsByTags(
     apiArticle.tags.map((tag) => tag.id),
@@ -167,7 +252,7 @@ export default async function PostPage(props: PageProps<'/posts/[id]'>) {
               <Box
                 className={styles.articleHtml}
                 // biome-ignore lint/security/noDangerouslySetInnerHtml: CMSが記事本文をHTMLで返すため
-                dangerouslySetInnerHTML={{ __html: detail.content }}
+                dangerouslySetInnerHTML={{ __html: content }}
               />
             </Card>
 
@@ -259,6 +344,8 @@ export default async function PostPage(props: PageProps<'/posts/[id]'>) {
           ),
         }}
       />
+
+      <LiteYTEmbed />
     </>
   );
 }
