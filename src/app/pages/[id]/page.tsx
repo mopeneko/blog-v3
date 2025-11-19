@@ -5,12 +5,10 @@ import type { ArticleDetail } from '@/lib/articleDetails';
 import { notFound } from 'next/navigation';
 import styles from './page.module.css';
 
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}): Promise<Metadata> {
-  const id = (await params).id;
+export async function generateMetadata(
+  props: PageProps<'/pages/[id]'>,
+): Promise<Metadata> {
+  const { id } = await props.params;
   const page = await fetchPageBySlug(id);
   const image = page.thumbnail
     ? {
