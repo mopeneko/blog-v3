@@ -18,7 +18,7 @@ const nextConfig: NextConfig = {
         destination: 'https://cloud.umami.is/script.js',
       },
     ];
-  }
+  },
 };
 
 export default nextConfig;
