@@ -8,5 +8,5 @@ export const LiteYTEmbed = () => {
     import('lite-youtube-embed/src/lite-yt-embed.js');
   }, []);
   // biome-ignore lint/complexity/noUselessFragments: Should be a component
-  return <></>
+  return <></>;
 };

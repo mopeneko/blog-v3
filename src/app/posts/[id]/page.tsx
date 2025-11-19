@@ -1,55 +1,37 @@
-import type { Root } from 'hast';
+import {
+  Badge,
+  Box,
+  Button,
+  Card,
+  Flex,
+  Grid,
+  Heading,
+  Inset,
+  Text,
+} from '@radix-ui/themes';
 import type { Metadata } from 'next';
 import 'lite-youtube-embed/src/lite-yt-embed.css';
-import NextImage from 'next/image';
-import NextLink from 'next/link';
-import React from 'react';
-import { rehype } from 'rehype';
-import { visit } from 'unist-util-visit';
-import { LiteYTEmbed } from '@/components/LiteYTEmbed';
-import { ProductCard } from '@/components/ProductCard';
-import { RelatedArticleCard } from '@/components/RelatedArticleCard';
-import { Tag as TagComponent } from '@/components/Tag';
+import Link from 'next/link';
+import { notFound } from 'next/navigation';
+
+import type { Article } from '@/lib/article';
+import type { ArticleDetail } from '@/lib/articleDetails';
+import styles from './page.module.css';
 import { fetchPostBySlug, fetchPostsByTags } from '@/lib/api/list_posts';
 import { generatePostJsonLd } from '@/lib/structured-data/post';
+import { LiteYTEmbed } from '@/components/LiteYTEmbed';
+import type { Root } from 'hast';
+import { visit } from 'unist-util-visit';
+import { rehype } from 'rehype';
+import type { AffiliateProduct } from '@/lib/affiliateProducts';
+import Image from 'next/image';
 
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}): Promise<Metadata> {
-  const id = (await params).id;
-  const post = await fetchPostBySlug(id);
-  const image = post.thumbnail
-    ? {
-        url: post.thumbnail.url,
-        width: post.thumbnail.width,
-        height: post.thumbnail.height,
-      }
-    : undefined;
-  return {
-    title: `${post.title} - もぺブログ`,
-    openGraph: {
-      type: 'website',
-      url: `${process.env.NEXT_PUBLIC_SITE_URL}/posts/${id}`,
-      title: `${post.title} - もぺブログ`,
-      siteName: 'もぺブログ',
-      images: image,
-    },
-    twitter: {
-      card: 'summary_large_image',
-      site: '@nkyna_',
-      creator: '@nkyna_',
-      title: `${post.title} - もぺブログ`,
-      images: image,
-    },
-    alternates: {
-      types: {
-        'application/rss+xml': `${process.env.NEXT_PUBLIC_SITE_URL}/rss.xml`,
-      },
-    },
-  };
-}
+const formatDate = (date: string) =>
+  new Date(date).toLocaleDateString('ja-JP', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  });
 
 const rehypeInsertAdsPlugin = () => {
   let count = 0;
@@ -125,126 +107,304 @@ const rehypeLiteYTPlugin = () => {
   };
 };
 
-const formatter = new Intl.DateTimeFormat('ja-JP', {
-  year: 'numeric',
-  month: '2-digit',
-  day: '2-digit',
-});
-
-export default async function Post({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const post = await fetchPostBySlug((await params).id);
-  const product = post.product && {
-    name: post.product.name,
-    manufacture: post.product.manufacture,
-    image: post.product.image,
-    links: post.product.links.map((link) => ({
-      text: link.text,
-      url: link.url,
-    })),
+export async function generateMetadata(
+  props: PageProps<'/posts/[id]'>,
+): Promise<Metadata> {
+  const { id } = await props.params;
+  const post = await fetchPostBySlug(id);
+  const image = post.thumbnail
+    ? {
+        url: post.thumbnail.url,
+        width: post.thumbnail.width,
+        height: post.thumbnail.height,
+      }
+    : undefined;
+  return {
+    title: `${post.title} - もぺブログ`,
+    openGraph: {
+      type: 'website',
+      url: `${process.env.NEXT_PUBLIC_SITE_URL}/posts/${id}`,
+      title: `${post.title} - もぺブログ`,
+      siteName: 'もぺブログ',
+      images: image,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      site: '@nkyna_',
+      creator: '@nkyna_',
+      title: `${post.title} - もぺブログ`,
+      images: image,
+    },
+    alternates: {
+      types: {
+        'application/rss+xml': `${process.env.NEXT_PUBLIC_SITE_URL}/rss.xml`,
+      },
+    },
   };
+}
+
+export default async function PostPage(props: PageProps<'/posts/[id]'>) {
+  const { id } = await props.params;
+
+  const apiArticle = await fetchPostBySlug(id);
+  const detail: ArticleDetail = {
+    title: apiArticle.title,
+    slug: apiArticle.slug,
+    date: apiArticle.published_at,
+    updated: apiArticle.updated_at,
+    tags: apiArticle.tags.map((tag) => ({
+      id: tag.id,
+      label: tag.name,
+    })),
+    thumbnailUrl: apiArticle.thumbnail?.url,
+    content: apiArticle.content,
+  };
+
+  if (!detail) {
+    notFound();
+  }
 
   const content = String(
     await rehype()
       .use([rehypeInsertAdsPlugin, rehypeLiteYTPlugin])
-      .process(post.content),
+      .process(detail.content),
   );
 
-  const relatedPosts = await fetchPostsByTags(
-    post.tags.map((tag) => tag.id),
+  const apiRelatedArticles = await fetchPostsByTags(
+    apiArticle.tags.map((tag) => tag.id),
     3,
   );
 
+  const relatedArticles: Article[] = apiRelatedArticles.map((article) => ({
+    title: article.title,
+    slug: article.slug,
+    date: article.published_at,
+    tags: article.tags.map((tag) => ({
+      id: tag.id,
+      label: tag.name,
+    })),
+    thumbnailUrl: article.thumbnail?.url,
+  }));
+
+  const affiliateProduct: AffiliateProduct | undefined = apiArticle.product
+    ? {
+        name: apiArticle.product.name,
+        maker: apiArticle.product.manufacture,
+        thumbnailUrl: apiArticle.product.image?.url ?? '',
+        links: apiArticle.product.links.map((link) => ({
+          href: link.url,
+          label: link.text,
+        })),
+      }
+    : undefined;
+
+  const heroThumbnailStyle = detail.thumbnailUrl
+    ? {
+        backgroundImage: `url(${detail.thumbnailUrl})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+      }
+    : undefined;
+
   return (
     <>
-      <article className="max-w-lg mx-auto px-2 flex flex-col gap-y-4">
-        <h1 className="text-2xl font-bold">{post.title}</h1>
+      <Box className={styles.pageContainer}>
+        <Box style={{ maxWidth: '900px', margin: '0 auto' }}>
+          <Flex direction="column" gap="5">
+            <Card variant="surface" size="4" className={styles.heroCard}>
+              <Flex direction="column" gap="4">
+                <Inset clip="padding-box" side="top" pb="current">
+                  <Box className={styles.cover} style={heroThumbnailStyle}>
+                    <Box style={{ paddingTop: '38%' }} />
+                  </Box>
+                </Inset>
 
-        <div className="grid grid-row-1 gap-y-2">
-          <div className="text-xs text-right">
-            <div>
-              Published on {formatter.format(new Date(post.published_at))}
-            </div>
-            <div>Updated on {formatter.format(new Date(post.updated_at))}</div>
-          </div>
+                <Flex direction={{ initial: 'column', sm: 'row' }} gap="3">
+                  <Flex gap="2" wrap="wrap">
+                    {detail.tags.map((tag) => (
+                      <Badge
+                        key={tag.id}
+                        color="cyan"
+                        variant="soft"
+                        radius="medium"
+                        className={styles.tagBadge}
+                        asChild
+                      >
+                        <Link href={`/tags/${encodeURIComponent(tag.id)}`}>
+                          {tag.label}
+                        </Link>
+                      </Badge>
+                    ))}
+                  </Flex>
+                  <Flex
+                    gap="3"
+                    align="center"
+                    wrap="wrap"
+                    className={styles.meta}
+                  >
+                    <Text color="gray" size="2">
+                      公開: {formatDate(detail.date)}
+                    </Text>
+                    <Text color="gray" size="2" className={styles.metaDivider}>
+                      ／
+                    </Text>
+                    <Text color="gray" size="2">
+                      更新: {formatDate(detail.updated)}
+                    </Text>
+                  </Flex>
+                </Flex>
 
-          <div className="text-right">
-            {post.tags.map((tag, i) => (
-              <React.Fragment key={tag.id}>
-                {i > 0 && ' '}
-                <NextLink href={`/tags/${tag.id}`}>
-                  <TagComponent name={tag.name} />
-                </NextLink>
-              </React.Fragment>
-            ))}
-          </div>
-        </div>
+                <Flex direction="column" gap="2">
+                  <Text weight="medium" color="cyan">
+                    {'Post'}
+                  </Text>
+                  <Heading size="8">{detail.title}</Heading>
+                </Flex>
+              </Flex>
+            </Card>
 
-        {post.thumbnail && (
-          <NextImage
-            className="w-full rounded-lg"
-            src={post.thumbnail.url}
-            alt={post.title}
-            width={post.thumbnail.width}
-            height={post.thumbnail.height}
-            loading="eager"
-          />
-        )}
+            <Card variant="surface" size="4" className={styles.bodyCard}>
+              <Box
+                className={styles.articleHtml}
+                // biome-ignore lint/security/noDangerouslySetInnerHtml: CMSが記事本文をHTMLで返すため
+                dangerouslySetInnerHTML={{ __html: content }}
+              />
+            </Card>
 
-        <div
-          className="prose w-full m-auto"
-          // biome-ignore lint/security/noDangerouslySetInnerHtml: Article content
-          dangerouslySetInnerHTML={{ __html: content }}
-        />
+            {affiliateProduct ? (
+              <Flex
+                direction="column"
+                gap="2"
+                className={styles.affiliateSection}
+              >
+                <Text size="2" color="gray" className={styles.affiliateLabel}>
+                  スポンサーリンク
+                </Text>
+                <Card
+                  variant="surface"
+                  size="4"
+                  className={styles.affiliateCard}
+                >
+                  <Flex
+                    direction={{ initial: 'column', sm: 'row' }}
+                    gap="4"
+                    align="center"
+                  >
+                    <Box className={styles.affiliateThumbnail}>
+                      <Image
+                        width={128}
+                        height={128}
+                        src={affiliateProduct.thumbnailUrl}
+                        alt={affiliateProduct.name}
+                      />
+                    </Box>
+                    <Flex direction="column" gap="3" style={{ flexGrow: 1 }}>
+                      <Flex direction="column" gap="1">
+                        <Heading size="5">{affiliateProduct.name}</Heading>
+                        <Text color="gray" size="2">
+                          メーカー: {affiliateProduct.maker}
+                        </Text>
+                      </Flex>
+                      {affiliateProduct.links.length > 0 ? (
+                        <Flex gap="2" wrap="wrap">
+                          {affiliateProduct.links.map((link) => (
+                            <Button
+                              key={link.href}
+                              color="cyan"
+                              size="3"
+                              radius="large"
+                              asChild
+                            >
+                              <Link
+                                href={link.href}
+                                target="_blank"
+                                rel="noreferrer noopener"
+                              >
+                                {link.label}
+                              </Link>
+                            </Button>
+                          ))}
+                        </Flex>
+                      ) : null}
+                    </Flex>
+                  </Flex>
+                </Card>
+              </Flex>
+            ) : null}
 
-        {product && (
-          <ProductCard
-            name={product.name}
-            manufacture={product.manufacture}
-            image={
-              product.image
-                ? {
-                    src: product.image.url,
-                    altText: product.name,
-                    width: product.image.width,
-                    height: product.image.height,
-                  }
-                : null
-            }
-            links={product.links}
-          />
-        )}
+            {relatedArticles.length > 0 ? (
+              <Flex direction="column" gap="3">
+                <Flex direction="column" gap="1">
+                  <Text weight="medium" color="cyan">
+                    {'Related'}
+                  </Text>
+                  <Heading size="6">関連記事</Heading>
+                  <Text color="gray">
+                    同じテーマの読み物を3件までピックアップしました。
+                  </Text>
+                </Flex>
 
-        {relatedPosts.map((relatedPost) => (
-          <NextLink key={relatedPost.id} href={`/posts/${relatedPost.slug}`}>
-            <RelatedArticleCard
-              title={relatedPost.title}
-              publishedAt={formatter.format(new Date(relatedPost.published_at))}
-              updatedAt={formatter.format(new Date(relatedPost.updated_at))}
-              tags={relatedPost.tags.map((tag) => ({
-                id: tag.id,
-                name: tag.name,
-              }))}
-            />
-          </NextLink>
-        ))}
-        <ins
-          className="adsbygoogle"
-          style={{ display: 'block' }}
-          data-ad-format="autorelaxed"
-          data-ad-client="ca-pub-3857753364740983"
-          data-ad-slot="3205804455"
-        />
-        <script
-          // biome-ignore lint/security/noDangerouslySetInnerHtml: For Google AdSense ad unit
-          dangerouslySetInnerHTML={{
-            __html: '(adsbygoogle = window.adsbygoogle || []).push({});',
-          }}
-        />
-      </article>
+                <Grid columns={{ initial: '1', sm: '2', md: '3' }} gap="4">
+                  {relatedArticles.map((related) => (
+                    <Card
+                      key={related.slug}
+                      variant="surface"
+                      size="3"
+                      asChild
+                      className={styles.relatedCard}
+                    >
+                      <Link
+                        href={`/posts/${related.slug}`}
+                        style={{ color: 'inherit', textDecoration: 'none' }}
+                      >
+                        <Flex direction="column" gap="3">
+                          <Inset clip="padding-box" side="top" pb="current">
+                            <Box
+                              className={styles.relatedCover}
+                              style={
+                                related.thumbnailUrl
+                                  ? {
+                                      backgroundImage: `url(${related.thumbnailUrl})`,
+                                      backgroundSize: 'cover',
+                                      backgroundPosition: 'center',
+                                      backgroundRepeat: 'no-repeat',
+                                    }
+                                  : undefined
+                              }
+                            >
+                              <Box style={{ paddingTop: '52%' }} />
+                            </Box>
+                          </Inset>
+                          <Flex direction="column" gap="1">
+                            <Heading size="4">{related.title}</Heading>
+                            <Text color="gray" size="2">
+                              {formatDate(related.date)}
+                            </Text>
+                          </Flex>
+                          <Flex gap="2" wrap="wrap">
+                            {related.tags.map((tag) => (
+                              <Badge
+                                key={tag.id}
+                                color="cyan"
+                                variant="soft"
+                                radius="medium"
+                                className={styles.tagBadge}
+                              >
+                                {tag.label}
+                              </Badge>
+                            ))}
+                          </Flex>
+                        </Flex>
+                      </Link>
+                    </Card>
+                  ))}
+                </Grid>
+              </Flex>
+            ) : null}
+          </Flex>
+        </Box>
+      </Box>
 
       <script
         type="application/ld+json"
@@ -252,15 +412,16 @@ export default async function Post({
         dangerouslySetInnerHTML={{
           __html: JSON.stringify(
             generatePostJsonLd({
-              title: post.title,
-              slug: post.slug,
-              thumbnail: post.thumbnail?.url,
-              publishedAt: post.published_at,
-              updatedAt: post.updated_at,
+              title: apiArticle.title,
+              slug: apiArticle.slug,
+              thumbnail: apiArticle.thumbnail?.url,
+              publishedAt: apiArticle.published_at,
+              updatedAt: apiArticle.updated_at,
             }),
           ),
         }}
       />
+
       <LiteYTEmbed />
     </>
   );
