@@ -7,17 +7,17 @@ import {
   Heading,
   Inset,
   Text,
-} from "@radix-ui/themes";
-import { fetchPosts } from "@/lib/api/list_posts";
-import type { Article } from "@/lib/article";
-import Link from "next/link";
-import styles from "./page.module.css";
+} from '@radix-ui/themes';
+import { fetchPosts } from '@/lib/api/list_posts';
+import type { Article } from '@/lib/article';
+import Link from 'next/link';
+import styles from './page.module.css';
 
 const formatDate = (date: string) =>
-  new Date(date).toLocaleDateString("ja-JP", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
+  new Date(date).toLocaleDateString('ja-JP', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
   });
 
 export default async function Home() {
@@ -36,11 +36,11 @@ export default async function Home() {
 
   return (
     <Box className={styles.pageContainer}>
-      <Box style={{ maxWidth: "1100px", margin: "0 auto" }}>
+      <Box style={{ maxWidth: '1100px', margin: '0 auto' }}>
         <Flex direction="column" gap="4">
           <Flex direction="column" gap="2">
             <Text weight="medium" color="cyan">
-              {"Journal"}
+              {'Journal'}
             </Text>
             <Heading size="8">最新の記事</Heading>
             <Text color="gray">
@@ -48,11 +48,11 @@ export default async function Home() {
             </Text>
           </Flex>
 
-          <Grid columns={{ initial: "1", sm: "2", md: "3" }} gap="4">
+          <Grid columns={{ initial: '1', sm: '2', md: '3' }} gap="4">
             {articles.map((article) => {
               const thumbnailBackground = article.thumbnailUrl
                 ? `url(${article.thumbnailUrl})`
-                : "linear-gradient(135deg, #e3f5ff, #9bd7ff)";
+                : 'linear-gradient(135deg, #e3f5ff, #9bd7ff)';
 
               return (
                 <Card
@@ -60,31 +60,31 @@ export default async function Home() {
                   variant="surface"
                   size="3"
                   asChild
-                  style={{ height: "100%" }}
+                  style={{ height: '100%' }}
                   className={styles.articleCard}
                 >
                   <Link
                     href={`/posts/${article.slug}`}
                     style={{
-                      color: "inherit",
-                      textDecoration: "none",
-                      height: "100%",
+                      color: 'inherit',
+                      textDecoration: 'none',
+                      height: '100%',
                     }}
                   >
-                    <Flex direction="column" gap="3" style={{ height: "100%" }}>
+                    <Flex direction="column" gap="3" style={{ height: '100%' }}>
                       <Inset clip="padding-box" side="top" pb="current">
                         <Box
                           style={{
-                            borderRadius: "12px",
-                            overflow: "hidden",
+                            borderRadius: '12px',
+                            overflow: 'hidden',
                             backgroundImage: thumbnailBackground,
-                            backgroundSize: "cover",
-                            backgroundPosition: "center",
-                            backgroundRepeat: "no-repeat",
+                            backgroundSize: 'cover',
+                            backgroundPosition: 'center',
+                            backgroundRepeat: 'no-repeat',
                           }}
                           className={styles.articleThumb}
                         >
-                          <Box style={{ paddingTop: "60%" }} />
+                          <Box style={{ paddingTop: '60%' }} />
                         </Box>
                       </Inset>
 
