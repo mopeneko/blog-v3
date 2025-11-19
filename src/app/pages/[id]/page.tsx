@@ -48,12 +48,6 @@ const formatDate = (date: string) =>
     day: 'numeric',
   });
 
-const formatter = new Intl.DateTimeFormat('ja-JP', {
-  year: 'numeric',
-  month: '2-digit',
-  day: '2-digit',
-});
-
 export default async function Page(props: PageProps<'/pages/[id]'>) {
   const { id } = await props.params;
   const apiPage = await fetchPageBySlug(id);
