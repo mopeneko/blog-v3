@@ -16,7 +16,7 @@
     "@radix-ui/themes": "^3.2.1",
     "lite-youtube-embed": "^0.3.3",
     "microcms-js-sdk": "^3.2.0",
-    "next": "16.0.8",
+    "next": "16.0.10",
     "react": "19.2.1",
     "react-dom": "19.2.1",
     "rehype": "^13.0.2",
