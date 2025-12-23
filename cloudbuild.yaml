@@ -48,6 +48,17 @@ steps:
         --labels=managed-by=gcp-cloud-build-deploy-cloud-run,commit-sha=$COMMIT_SHA,gcb-build-id=$BUILD_ID,gcb-trigger-id=$_TRIGGER_ID
       - "--region=$_DEPLOY_REGION"
       - "--quiet"
+  - id: Purge Fastly cache
+    name: gcr.io/cloud-builders/curl
+    args:
+      - "-i"
+      - "-X"
+      - "POST"
+      - "https://api.fastly.com/service/${_FASTLY_SERVICE_ID}/purge_all"
+      - "-H"
+      - "Fastly-Key: ${_FASTLY_API_KEY}"
+      - "-H"
+      - "Accept: application/json"
 options:
   substitutionOption: ALLOW_LOOSE
   logging: CLOUD_LOGGING_ONLY
