@@ -49,7 +49,7 @@ export default async function Home() {
           <Grid columns={{ initial: '1', sm: '2', md: '3' }} gap="4">
             {articles.map((article, i) => {
               const thumbnailBackground = article.thumbnailUrl
-                ? `url(${article.thumbnailUrl})`
+                ? `url(\"${article.thumbnailUrl}\")`
                 : 'linear-gradient(135deg, #e3f5ff, #9bd7ff)';
 
               return (
