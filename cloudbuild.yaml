@@ -24,6 +24,8 @@ steps:
       - MICROCMS_SERVICE_DOMAIN=$_MICROCMS_SERVICE_DOMAIN
       - "--build-arg"
       - MICROCMS_API_KEY=$_MICROCMS_API_KEY
+    env:
+      - DOCKER_BUILDKIT=1
   - id: Push
     name: gcr.io/cloud-builders/docker
     args:
