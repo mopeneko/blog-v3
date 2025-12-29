@@ -112,12 +112,19 @@ export async function generateMetadata(
 ): Promise<Metadata> {
   const { id } = await props.params;
   const post = await fetchPostBySlug(id);
+
+  if (!post) {
+    return {
+      title: '記事が見つかりません - もぺブログ',
+    };
+  }
+
   const image = post.thumbnail
     ? {
-        url: post.thumbnail.url,
-        width: post.thumbnail.width,
-        height: post.thumbnail.height,
-      }
+      url: post.thumbnail.url,
+      width: post.thumbnail.width,
+      height: post.thumbnail.height,
+    }
     : undefined;
   return {
     title: `${post.title} - もぺブログ`,
@@ -147,6 +154,11 @@ export default async function PostPage(props: PageProps<'/posts/[id]'>) {
   const { id } = await props.params;
 
   const apiArticle = await fetchPostBySlug(id);
+
+  if (!apiArticle) {
+    notFound();
+  }
+
   const detail: ArticleDetail = {
     title: apiArticle.title,
     slug: apiArticle.slug,
@@ -188,23 +200,23 @@ export default async function PostPage(props: PageProps<'/posts/[id]'>) {
 
   const affiliateProduct: AffiliateProduct | undefined = apiArticle.product
     ? {
-        name: apiArticle.product.name,
-        maker: apiArticle.product.manufacture,
-        thumbnailUrl: apiArticle.product.image?.url ?? '',
-        links: apiArticle.product.links.map((link) => ({
-          href: link.url,
-          label: link.text,
-        })),
-      }
+      name: apiArticle.product.name,
+      maker: apiArticle.product.manufacture,
+      thumbnailUrl: apiArticle.product.image?.url ?? '',
+      links: apiArticle.product.links.map((link) => ({
+        href: link.url,
+        label: link.text,
+      })),
+    }
     : undefined;
 
   const heroThumbnailStyle = detail.thumbnailUrl
     ? {
-        backgroundImage: `url(\"${detail.thumbnailUrl}\")`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
-      }
+      backgroundImage: `url(\"${detail.thumbnailUrl}\")`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat',
+    }
     : undefined;
 
   return (
@@ -365,11 +377,11 @@ export default async function PostPage(props: PageProps<'/posts/[id]'>) {
                               style={
                                 related.thumbnailUrl
                                   ? {
-                                      backgroundImage: `url(${related.thumbnailUrl})`,
-                                      backgroundSize: 'cover',
-                                      backgroundPosition: 'center',
-                                      backgroundRepeat: 'no-repeat',
-                                    }
+                                    backgroundImage: `url(${related.thumbnailUrl})`,
+                                    backgroundSize: 'cover',
+                                    backgroundPosition: 'center',
+                                    backgroundRepeat: 'no-repeat',
+                                  }
                                   : undefined
                               }
                             >

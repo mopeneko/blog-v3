@@ -90,7 +90,11 @@ export const fetchPostBySlug = async (slug: string) => {
       depth: 2,
     },
   });
-  return post.parse(result.contents[0]);
+  const content = result.contents[0];
+  if (!content) {
+    return null;
+  }
+  return post.parse(content);
 };
 
 export const fetchPostsByTags = async (tags: string[], limit?: number) => {
@@ -114,13 +118,21 @@ export const fetchPageBySlug = async (slug: string) => {
       depth: 2,
     },
   });
-  return page.parse(result.contents[0]);
+  const content = result.contents[0];
+  if (!content) {
+    return null;
+  }
+  return page.parse(content);
 };
 
 export const fetchTagById = async (id: string) => {
-  const result = await client.get<Tag>({
-    endpoint: ENDPOINT_TAG,
-    contentId: id,
-  });
-  return tag.parse(result);
+  try {
+    const result = await client.get<Tag>({
+      endpoint: ENDPOINT_TAG,
+      contentId: id,
+    });
+    return tag.parse(result);
+  } catch (e) {
+    return null;
+  }
 };

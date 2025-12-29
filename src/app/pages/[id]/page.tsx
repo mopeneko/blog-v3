@@ -10,12 +10,19 @@ export async function generateMetadata(
 ): Promise<Metadata> {
   const { id } = await props.params;
   const page = await fetchPageBySlug(id);
+
+  if (!page) {
+    return {
+      title: 'ページが見つかりません - もぺブログ',
+    };
+  }
+
   const image = page.thumbnail
     ? {
-        url: page.thumbnail.url,
-        width: page.thumbnail.width,
-        height: page.thumbnail.height,
-      }
+      url: page.thumbnail.url,
+      width: page.thumbnail.width,
+      height: page.thumbnail.height,
+    }
     : undefined;
   return {
     title: `${page.title} - もぺブログ`,
@@ -51,6 +58,11 @@ const formatDate = (date: string) =>
 export default async function Page(props: PageProps<'/pages/[id]'>) {
   const { id } = await props.params;
   const apiPage = await fetchPageBySlug(id);
+
+  if (!apiPage) {
+    notFound();
+  }
+
   const detail: ArticleDetail = {
     title: apiPage.title,
     slug: apiPage.slug,
@@ -67,11 +79,11 @@ export default async function Page(props: PageProps<'/pages/[id]'>) {
 
   const heroThumbnailStyle = detail.thumbnailUrl
     ? {
-        backgroundImage: `url(${detail.thumbnailUrl})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
-      }
+      backgroundImage: `url(${detail.thumbnailUrl})`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat',
+    }
     : undefined;
 
   return (

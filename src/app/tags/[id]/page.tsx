@@ -10,6 +10,7 @@ import {
 } from '@radix-ui/themes';
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { notFound } from 'next/navigation';
 import { fetchPostsByTags, fetchTagById } from '@/lib/api/list_posts';
 import type { Article } from '@/lib/article';
 import styles from '../../page.module.css';
@@ -26,6 +27,13 @@ export async function generateMetadata(
 ): Promise<Metadata> {
   const { id } = await props.params;
   const tag = await fetchTagById(id);
+
+  if (!tag) {
+    return {
+      title: 'タグが見つかりません - もぺブログ',
+    };
+  }
+
   return {
     title: `${tag.name} - もぺブログ`,
     twitter: {
@@ -51,6 +59,11 @@ export async function generateMetadata(
 export default async function TagPage(props: PageProps<'/tags/[id]'>) {
   const { id } = await props.params;
   const tag = await fetchTagById(id);
+
+  if (!tag) {
+    notFound();
+  }
+
   const posts = await fetchPostsByTags([id]);
   const tagLabel = tag.name;
   const taggedArticles: Article[] = posts.map((post) => ({
