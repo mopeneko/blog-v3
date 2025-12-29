@@ -1,3 +1,5 @@
+# syntax=docker/dockerfile:1
+
 ARG BUN_VERSION=1.2
 
 FROM oven/bun:$BUN_VERSION AS builder
@@ -6,7 +8,7 @@ WORKDIR /app
 
 COPY package.json bun.lock ./
 
-RUN bun install --frozen-lockfile
+RUN --mount=type=cache,target=/root/.bun/install/cache,sharing=locked bun install --frozen-lockfile
 
 COPY . .
 
@@ -20,7 +22,7 @@ ENV NEXT_PUBLIC_SITE_URL=${NEXT_PUBLIC_SITE_URL}
 ENV MICROCMS_SERVICE_DOMAIN=${MICROCMS_SERVICE_DOMAIN}
 ENV MICROCMS_API_KEY=${MICROCMS_API_KEY}
 
-RUN bun run build
+RUN --mount=type=cache,target=/app/.next/cache,sharing=locked bun run build
 
 FROM oven/bun:$BUN_VERSION-distroless
 
