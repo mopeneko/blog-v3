@@ -1,0 +1,30 @@
+# https://taskfile.dev
+
+version: '3'
+
+tasks:
+  deploy:
+    cmds:
+      - task: build-container-image
+      - task: push-container-image
+      - task: restart-container-instance
+  
+  build-container-image:
+    cmds:
+      - docker build --build-arg NEXT_PUBLIC_SITE_URL={{.NEXT_PUBLIC_SITE_URL}} --build-arg MICROCMS_SERVICE_DOMAIN={{.MICROCMS_SERVICE_DOMAIN}} --build-arg MICROCMS_API_KEY={{.MICROCMS_API_KEY}} -t {{.IMAGE_NAME}}:latest .
+    requires:
+      vars: [IMAGE_NAME, NEXT_PUBLIC_SITE_URL, MICROCMS_SERVICE_DOMAIN, MICROCMS_API_KEY]
+
+  push-container-image:
+    cmds:
+      - docker push {{.IMAGE_NAME}}:latest
+    requires:
+      vars: [IMAGE_NAME]
+
+  restart-container-instance:
+    dir: infrastructure
+    cmds:
+      - oci container-instances container-instance restart --container-instance-id "{{.CONTAINER_INSTANCE_ID}}"
+    vars:
+      CONTAINER_INSTANCE_ID:
+        sh: pulumi stack output containerInstanceID

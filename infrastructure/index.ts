@@ -207,3 +207,5 @@ const containerInstance = new oci.containerengine.ContainerInstance(
     displayName: 'mope-blog',
   },
 );
+
+export const containerInstanceID = containerInstance.id;
