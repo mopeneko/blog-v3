@@ -5,7 +5,7 @@
     "": {
       "name": "mope-blog",
       "dependencies": {
-        "@pulumi/oci": "0.13.0",
+        "@pulumi/oci": "^3.13.0",
         "@pulumi/pulumi": "^3.113.0",
       },
       "devDependencies": {
@@ -103,7 +103,7 @@
 
     "@protobufjs/utf8": ["@protobufjs/utf8@1.1.0", "", {}, "sha512-Vvn3zZrhQZkkBE8LSuW3em98c0FwgO4nxzv6OdSxPKJIEKY2bGbHn+mhGIPerzI4twdxaP8/0+06HBpwf345Lw=="],
 
-    "@pulumi/oci": ["@pulumi/oci@0.13.0", "", { "dependencies": { "@pulumi/pulumi": "^3.0.0" } }, "sha512-yCEMHdhF+Sw159ufUV/c8PGylKRVUFxMnj1iUXD+4KCk0eF39piTrNjmbx9IwsUjlv2oNAl5KJYnD+UEjHothg=="],
+    "@pulumi/oci": ["@pulumi/oci@3.13.0", "", { "dependencies": { "@pulumi/pulumi": "^3.142.0" } }, "sha512-8Sofr4TA4MA9UNbP5j+vXjzRXPGlhhkGuBIw6X2YO2W6t1q+u6wuCgJSpDHbZNrGGKnwLyZDNfVFCLOUMwRbVg=="],
 
     "@pulumi/pulumi": ["@pulumi/pulumi@3.213.0", "", { "dependencies": { "@grpc/grpc-js": "^1.10.1", "@logdna/tail-file": "^2.0.6", "@npmcli/arborist": "^7.3.1", "@opentelemetry/api": "^1.9", "@opentelemetry/exporter-zipkin": "^1.28", "@opentelemetry/instrumentation": "^0.55", "@opentelemetry/instrumentation-grpc": "^0.55", "@opentelemetry/resources": "^1.28", "@opentelemetry/sdk-trace-base": "^1.28", "@opentelemetry/sdk-trace-node": "^1.28", "@types/google-protobuf": "^3.15.5", "@types/semver": "^7.5.6", "@types/tmp": "^0.2.6", "execa": "^5.1.0", "fdir": "^6.1.1", "google-protobuf": "^3.21.4", "got": "^11.8.6", "ini": "^2.0.0", "js-yaml": "^3.14.2", "minimist": "^1.2.6", "normalize-package-data": "^6.0.0", "package-directory": "^8.1.0", "picomatch": "^3.0.1", "require-from-string": "^2.0.1", "semver": "^7.5.2", "source-map-support": "^0.5.6", "tmp": "^0.2.4", "upath": "^1.1.0" }, "peerDependencies": { "ts-node": ">= 7.0.1 < 12", "typescript": ">= 3.8.3 < 6" }, "optionalPeers": ["ts-node", "typescript"] }, "sha512-qTAOJXQYjMse2oAwht4iuYA4TiSgUgDfGmlySf2xa4n34+eF1/ytCbF3UJdfOx9+yDD5mYBAi37t0OY/VyVzyQ=="],
 
