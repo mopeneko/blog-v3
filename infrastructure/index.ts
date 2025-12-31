@@ -62,10 +62,10 @@ const prodSecurityList = new oci.core.SecurityList("prod-sls", {
     {
       protocol: "6",
       source: "0.0.0.0/0",
-      description: "HTTP :3000",
+      description: "HTTP :80",
       tcpOptions: {
-        min: 3000,
-        max: 3000,
+        min: 80,
+        max: 80,
       },
       sourceType: "CIDR_BLOCK",
       stateless: false,
@@ -126,7 +126,7 @@ const nsgEgressRule = new oci.core.NetworkSecurityGroupSecurityRule("container-n
   stateless: false,
 });
 
-// Allow ingress on port 3000 for your app
+// Allow ingress on port 80 for your app
 const nsgIngressRule = new oci.core.NetworkSecurityGroupSecurityRule("container-nsg-ingress-http", {
   networkSecurityGroupId: containerNsg.id,
   direction: "INGRESS",
@@ -135,8 +135,8 @@ const nsgIngressRule = new oci.core.NetworkSecurityGroupSecurityRule("container-
   sourceType: "CIDR_BLOCK",
   tcpOptions: {
     destinationPortRange: {
-      min: 3000,
-      max: 3000,
+      min: 80,
+      max: 80,
     },
   },
   stateless: false,
@@ -152,12 +152,13 @@ const containerInstance = new oci.containerengine.ContainerInstance("mope-blog",
     healthChecks: [{
       healthCheckType: "HTTP",
       path: "/health",
-      port: 3000,
+      port: 80,
     }],
     environmentVariables: {
       NEXT_PUBLIC_SITE_URL: config.require("siteUrl"),
       MICROCMS_SERVICE_DOMAIN: config.require("microcmsServiceDomain"),
       MICROCMS_API_KEY: config.require("microcmsApiKey"),
+      PORT: "80",
     },
   }],
   imagePullSecrets: [{
