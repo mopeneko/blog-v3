@@ -24,6 +24,20 @@ const prodInternetGateway = new oci.core.InternetGateway('prod-igw', {
   displayName: 'prod-igw',
 });
 
+const prodServiceGateway = new oci.core.ServiceGateway('prod-sgw', {
+  compartmentId: prodCompartment.id,
+  vcnId: prodVcn.id,
+  services: oci.core.getServicesOutput().apply((result) => {
+    return [{ serviceId: result.services.find((service) => service.name.startsWith('All '))!.id }];
+  }),
+  displayName: 'prod-sgw',
+});
+
+const prodDynamicRoutingGateway = new oci.core.Drg('prod-drg', {
+  compartmentId: prodCompartment.id,
+  displayName: 'prod-drg',
+})
+
 const prodRouteTable = new oci.core.RouteTable('prod-rtb', {
   compartmentId: prodCompartment.id,
   vcnId: prodVcn.id,
@@ -32,6 +46,26 @@ const prodRouteTable = new oci.core.RouteTable('prod-rtb', {
     {
       networkEntityId: prodInternetGateway.id,
       destination: '0.0.0.0/0',
+      destinationType: 'CIDR_BLOCK',
+    },
+  ],
+});
+
+const prodRouteTablePrivate = new oci.core.RouteTable('prod-rtb-private', {
+  compartmentId: prodCompartment.id,
+  vcnId: prodVcn.id,
+  displayName: 'prod-rtb-private',
+  routeRules: [
+    {
+      networkEntityId: prodServiceGateway.id,
+      destination: oci.core.getServicesOutput().apply((result) => {
+        return result.services.find((service) => service.name.startsWith('All '))!.cidrBlock;
+      }),
+      destinationType: 'SERVICE_CIDR_BLOCK',
+    },
+    {
+      networkEntityId: prodDynamicRoutingGateway.id,
+      destination: '10.0.0.0/16',
       destinationType: 'CIDR_BLOCK',
     },
   ],
@@ -75,6 +109,44 @@ const prodSecurityList = new oci.core.SecurityList('prod-sls', {
   ],
 });
 
+const prodSecurityListPrivate = new oci.core.SecurityList('prod-sls-private', {
+  compartmentId: prodCompartment.id,
+  vcnId: prodVcn.id,
+  displayName: 'prod-sls-private',
+  egressSecurityRules: [
+    {
+      destination: '0.0.0.0/0',
+      protocol: 'all',
+      destinationType: 'CIDR_BLOCK',
+      stateless: false,
+    },
+  ],
+  ingressSecurityRules: [
+    {
+      protocol: '1',
+      source: '10.0.0.0/16',
+      description: 'ICMP',
+      icmpOptions: {
+        type: 3,
+        code: 4,
+      },
+      sourceType: 'CIDR_BLOCK',
+      stateless: false,
+    },
+    {
+      protocol: '6',
+      source: '10.0.0.0/16',
+      description: 'HTTP :80',
+      tcpOptions: {
+        min: 80,
+        max: 80,
+      },
+      sourceType: 'CIDR_BLOCK',
+      stateless: false,
+    },
+  ],
+});
+
 const prodPublicSubnet = new oci.core.Subnet('prod-public-subnet', {
   cidrBlock: '10.0.0.0/24',
   compartmentId: prodCompartment.id,
@@ -95,6 +167,8 @@ const prodPrivateSubnet = new oci.core.Subnet('prod-private-subnet', {
   dnsLabel: 'privatesubnet',
   prohibitInternetIngress: true,
   prohibitPublicIpOnVnic: true,
+  routeTableId: prodRouteTablePrivate.id,
+  securityListIds: [prodSecurityListPrivate.id],
 });
 
 const containerRepository = new oci.artifacts.ContainerRepository(
@@ -199,9 +273,9 @@ const containerInstance = new oci.containerengine.ContainerInstance(
     },
     vnics: [
       {
-        subnetId: prodPublicSubnet.id,
+        subnetId: prodPrivateSubnet.id,
         nsgIds: [containerNsg.id],
-        isPublicIpAssigned: true,
+        isPublicIpAssigned: false,
       },
     ],
     displayName: 'mope-blog',
@@ -209,3 +283,52 @@ const containerInstance = new oci.containerengine.ContainerInstance(
 );
 
 export const containerInstanceID = containerInstance.id;
+
+const nlb = new oci.networkloadbalancer.NetworkLoadBalancer(
+  'mope-blog-nlb',
+  {
+    compartmentId: prodCompartment.id,
+    displayName: 'mope-blog-nlb',
+    subnetId: prodPublicSubnet.id,
+    isPrivate: false,
+  },
+);
+
+const nlbBackendSet = new oci.networkloadbalancer.BackendSet(
+  'mope-blog-nlb-backend-set',
+  {
+    name: 'mope-blog-nlb-backend-set',
+    networkLoadBalancerId: nlb.id,
+    healthChecker: {
+      protocol: "HTTP",
+      port: 80,
+      returnCode: 200,
+      urlPath: "/health",
+    },
+    policy: "FIVE_TUPLE",
+  },
+);
+
+const nlbBackend = new oci.networkloadbalancer.Backend(
+  "mope-blog-nlb-backend",
+  {
+    name: "mope-blog-nlb-backend",
+    networkLoadBalancerId: nlb.id,
+    backendSetName: nlbBackendSet.name,
+    ipAddress: containerInstance.vnics[0].privateIp,
+    port: 80,
+    weight: 1,
+  }
+);
+
+const nlbListener = new oci.networkloadbalancer.Listener(
+  "mope-blog-nlb-listener",
+  {
+    name: "mope-blog-nlb-listener",
+    networkLoadBalancerId: nlb.id,
+    port: 80,
+    protocol: "TCP",
+    defaultBackendSetName: nlbBackendSet.name,
+  }
+)
+
