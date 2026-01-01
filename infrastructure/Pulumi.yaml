@@ -1,0 +1,10 @@
+name: mope-blog
+description: mope-blog on OCI
+runtime:
+  name: nodejs
+  options:
+    packagemanager: bun
+config:
+  pulumi:tags:
+    value:
+      pulumi:template: oci-typescript
