@@ -24,6 +24,12 @@ const prodInternetGateway = new oci.core.InternetGateway('prod-igw', {
   displayName: 'prod-igw',
 });
 
+const prodNatGateway = new oci.core.NatGateway('prod-nat-gateway', {
+  compartmentId: prodCompartment.id,
+  vcnId: prodVcn.id,
+  displayName: 'prod-nat-gateway',
+})
+
 const prodServiceGateway = new oci.core.ServiceGateway('prod-sgw', {
   compartmentId: prodCompartment.id,
   vcnId: prodVcn.id,
@@ -56,6 +62,11 @@ const prodRouteTablePrivate = new oci.core.RouteTable('prod-rtb-private', {
   vcnId: prodVcn.id,
   displayName: 'prod-rtb-private',
   routeRules: [
+    {
+      networkEntityId: prodNatGateway.id,
+      destination: '0.0.0.0/0',
+      destinationType: 'CIDR_BLOCK',
+    },
     {
       networkEntityId: prodServiceGateway.id,
       destination: oci.core.getServicesOutput().apply((result) => {
