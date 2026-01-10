@@ -19,10 +19,10 @@ export async function generateMetadata(
 
   const image = page.thumbnail
     ? {
-      url: page.thumbnail.url,
-      width: page.thumbnail.width,
-      height: page.thumbnail.height,
-    }
+        url: page.thumbnail.url,
+        width: page.thumbnail.width,
+        height: page.thumbnail.height,
+      }
     : undefined;
   return {
     title: `${page.title} - もぺブログ`,
@@ -79,11 +79,11 @@ export default async function Page(props: PageProps<'/pages/[id]'>) {
 
   const heroThumbnailStyle = detail.thumbnailUrl
     ? {
-      backgroundImage: `url(${detail.thumbnailUrl})`,
-      backgroundSize: 'cover',
-      backgroundPosition: 'center',
-      backgroundRepeat: 'no-repeat',
-    }
+        backgroundImage: `url(${detail.thumbnailUrl})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+      }
     : undefined;
 
   return (
