@@ -91,7 +91,11 @@ const rehypeInsertAdsPlugin = () => {
 const rehypeLiteYTPlugin = () => {
   return (tree: Root) => {
     visit(tree, 'element', (node) => {
-      if (node.tagName === 'p' && node.children.length > 0 && node.children[0].type === 'text') {
+      if (
+        node.tagName === 'p' &&
+        node.children.length > 0 &&
+        node.children[0].type === 'text'
+      ) {
         const matches = node.children[0].value.match(
           /<lite-youtube videoid="([a-zA-z0-9_-]+)">/,
         );
@@ -121,10 +125,10 @@ export async function generateMetadata(
 
   const image = post.thumbnail
     ? {
-      url: post.thumbnail.url,
-      width: post.thumbnail.width,
-      height: post.thumbnail.height,
-    }
+        url: post.thumbnail.url,
+        width: post.thumbnail.width,
+        height: post.thumbnail.height,
+      }
     : undefined;
   return {
     title: `${post.title} - もぺブログ`,
@@ -200,222 +204,216 @@ export default async function PostPage(props: PageProps<'/posts/[id]'>) {
 
   const affiliateProduct: AffiliateProduct | undefined = apiArticle.product
     ? {
-      name: apiArticle.product.name,
-      maker: apiArticle.product.manufacture,
-      thumbnailUrl: apiArticle.product.image?.url ?? '',
-      links: apiArticle.product.links.map((link) => ({
-        href: link.url,
-        label: link.text,
-      })),
-    }
+        name: apiArticle.product.name,
+        maker: apiArticle.product.manufacture,
+        thumbnailUrl: apiArticle.product.image?.url ?? '',
+        links: apiArticle.product.links.map((link) => ({
+          href: link.url,
+          label: link.text,
+        })),
+      }
     : undefined;
 
   const heroThumbnailStyle = detail.thumbnailUrl
     ? {
-      backgroundImage: `url(\"${detail.thumbnailUrl}\")`,
-      backgroundSize: 'cover',
-      backgroundPosition: 'center',
-      backgroundRepeat: 'no-repeat',
-    }
+        backgroundImage: `url(\"${detail.thumbnailUrl}\")`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+      }
     : undefined;
 
   return (
     <>
-      <Box className={styles.pageContainer}>
-        <Box style={{ maxWidth: '900px', margin: '0 auto' }}>
-          <Flex direction="column" gap="5">
-            <Card variant="surface" size="4" className={styles.heroCard}>
-              <Flex direction="column" gap="4">
-                <Inset clip="padding-box" side="top" pb="current">
-                  <Box className={styles.cover} style={heroThumbnailStyle}>
-                    <Box style={{ paddingTop: '38%' }} />
-                  </Box>
-                </Inset>
+      <Box style={{ maxWidth: '900px', margin: '0 auto', width: '100%' }}>
+        <Flex direction="column" gap="5">
+          <Card variant="surface" size="4" className={styles.heroCard}>
+            <Flex direction="column" gap="4">
+              <Inset clip="padding-box" side="top" pb="current">
+                <Box className={styles.cover} style={heroThumbnailStyle}>
+                  <Box style={{ paddingTop: '38%' }} />
+                </Box>
+              </Inset>
 
-                <Flex direction={{ initial: 'column', sm: 'row' }} gap="3">
-                  <Flex gap="2" wrap="wrap">
-                    {detail.tags.map((tag) => (
-                      <Badge
-                        key={tag.id}
-                        color="cyan"
-                        variant="soft"
-                        radius="medium"
-                        className={styles.tagBadge}
-                        asChild
-                      >
-                        <Link href={`/tags/${encodeURIComponent(tag.id)}`}>
-                          {tag.label}
-                        </Link>
-                      </Badge>
-                    ))}
-                  </Flex>
-                  <Flex
-                    gap="3"
-                    align="center"
-                    wrap="wrap"
-                    className={styles.meta}
-                  >
-                    <Text color="gray" size="2">
-                      公開: {formatDate(detail.date)}
-                    </Text>
-                    <Text color="gray" size="2" className={styles.metaDivider}>
-                      ／
-                    </Text>
-                    <Text color="gray" size="2">
-                      更新: {formatDate(detail.updated)}
-                    </Text>
-                  </Flex>
-                </Flex>
-
-                <Flex direction="column" gap="2">
-                  <Text weight="medium" color="cyan">
-                    {'Post'}
-                  </Text>
-                  <Heading size="8">{detail.title}</Heading>
-                </Flex>
-              </Flex>
-            </Card>
-
-            <Card variant="surface" size="4" className={styles.bodyCard}>
-              <Box
-                className={styles.articleHtml}
-                // biome-ignore lint/security/noDangerouslySetInnerHtml: CMSが記事本文をHTMLで返すため
-                dangerouslySetInnerHTML={{ __html: content }}
-              />
-            </Card>
-
-            {affiliateProduct ? (
-              <Flex
-                direction="column"
-                gap="2"
-                className={styles.affiliateSection}
-              >
-                <Text size="2" color="gray" className={styles.affiliateLabel}>
-                  スポンサーリンク
-                </Text>
-                <Card
-                  variant="surface"
-                  size="4"
-                  className={styles.affiliateCard}
-                >
-                  <Flex
-                    direction={{ initial: 'column', sm: 'row' }}
-                    gap="4"
-                    align="center"
-                  >
-                    <Box className={styles.affiliateThumbnail}>
-                      <Image
-                        width={128}
-                        height={128}
-                        src={affiliateProduct.thumbnailUrl}
-                        alt={affiliateProduct.name}
-                      />
-                    </Box>
-                    <Flex direction="column" gap="3" style={{ flexGrow: 1 }}>
-                      <Flex direction="column" gap="1">
-                        <Heading size="5">{affiliateProduct.name}</Heading>
-                        <Text color="gray" size="2">
-                          メーカー: {affiliateProduct.maker}
-                        </Text>
-                      </Flex>
-                      {affiliateProduct.links.length > 0 ? (
-                        <Flex gap="2" wrap="wrap">
-                          {affiliateProduct.links.map((link) => (
-                            <Button
-                              key={link.href}
-                              color="cyan"
-                              size="3"
-                              radius="large"
-                              asChild
-                            >
-                              <Link
-                                href={link.href}
-                                target="_blank"
-                                rel="noreferrer noopener sponsored"
-                              >
-                                {link.label}
-                              </Link>
-                            </Button>
-                          ))}
-                        </Flex>
-                      ) : null}
-                    </Flex>
-                  </Flex>
-                </Card>
-              </Flex>
-            ) : null}
-
-            {relatedArticles.length > 0 ? (
-              <Flex direction="column" gap="3">
-                <Flex direction="column" gap="1">
-                  <Text weight="medium" color="cyan">
-                    {'Related'}
-                  </Text>
-                  <Heading size="6">関連記事</Heading>
-                  <Text color="gray">
-                    同じテーマの読み物を3件までピックアップしました。
-                  </Text>
-                </Flex>
-
-                <Grid columns={{ initial: '1', sm: '2', md: '3' }} gap="4">
-                  {relatedArticles.map((related) => (
-                    <Card
-                      key={related.slug}
-                      variant="surface"
-                      size="3"
+              <Flex direction={{ initial: 'column', sm: 'row' }} gap="3">
+                <Flex gap="2" wrap="wrap">
+                  {detail.tags.map((tag) => (
+                    <Badge
+                      key={tag.id}
+                      color="cyan"
+                      variant="soft"
+                      radius="medium"
+                      className={styles.tagBadge}
                       asChild
-                      className={styles.relatedCard}
                     >
-                      <Link
-                        href={`/posts/${related.slug}`}
-                        style={{ color: 'inherit', textDecoration: 'none' }}
-                      >
-                        <Flex direction="column" gap="3">
-                          <Inset clip="padding-box" side="top" pb="current">
-                            <Box
-                              className={styles.relatedCover}
-                              style={
-                                related.thumbnailUrl
-                                  ? {
+                      <Link href={`/tags/${encodeURIComponent(tag.id)}`}>
+                        {tag.label}
+                      </Link>
+                    </Badge>
+                  ))}
+                </Flex>
+                <Flex
+                  gap="3"
+                  align="center"
+                  wrap="wrap"
+                  className={styles.meta}
+                >
+                  <Text color="gray" size="2">
+                    公開: {formatDate(detail.date)}
+                  </Text>
+                  <Text color="gray" size="2" className={styles.metaDivider}>
+                    ／
+                  </Text>
+                  <Text color="gray" size="2">
+                    更新: {formatDate(detail.updated)}
+                  </Text>
+                </Flex>
+              </Flex>
+
+              <Flex direction="column" gap="2">
+                <Text weight="medium" color="cyan">
+                  {'Post'}
+                </Text>
+                <Heading size="8">{detail.title}</Heading>
+              </Flex>
+            </Flex>
+          </Card>
+
+          <Card variant="surface" size="4" className={styles.bodyCard}>
+            <Box
+              className={styles.articleHtml}
+              // biome-ignore lint/security/noDangerouslySetInnerHtml: CMSが記事本文をHTMLで返すため
+              dangerouslySetInnerHTML={{ __html: content }}
+            />
+          </Card>
+
+          {affiliateProduct ? (
+            <Flex
+              direction="column"
+              gap="2"
+              className={styles.affiliateSection}
+            >
+              <Text size="2" color="gray" className={styles.affiliateLabel}>
+                スポンサーリンク
+              </Text>
+              <Card variant="surface" size="4" className={styles.affiliateCard}>
+                <Flex
+                  direction={{ initial: 'column', sm: 'row' }}
+                  gap="4"
+                  align="center"
+                >
+                  <Box className={styles.affiliateThumbnail}>
+                    <Image
+                      width={128}
+                      height={128}
+                      src={affiliateProduct.thumbnailUrl}
+                      alt={affiliateProduct.name}
+                    />
+                  </Box>
+                  <Flex direction="column" gap="3" style={{ flexGrow: 1 }}>
+                    <Flex direction="column" gap="1">
+                      <Heading size="5">{affiliateProduct.name}</Heading>
+                      <Text color="gray" size="2">
+                        メーカー: {affiliateProduct.maker}
+                      </Text>
+                    </Flex>
+                    {affiliateProduct.links.length > 0 ? (
+                      <Flex gap="2" wrap="wrap">
+                        {affiliateProduct.links.map((link) => (
+                          <Button
+                            key={link.href}
+                            color="cyan"
+                            size="3"
+                            radius="large"
+                            asChild
+                          >
+                            <Link
+                              href={link.href}
+                              target="_blank"
+                              rel="noreferrer noopener sponsored"
+                            >
+                              {link.label}
+                            </Link>
+                          </Button>
+                        ))}
+                      </Flex>
+                    ) : null}
+                  </Flex>
+                </Flex>
+              </Card>
+            </Flex>
+          ) : null}
+
+          {relatedArticles.length > 0 ? (
+            <Flex direction="column" gap="3">
+              <Flex direction="column" gap="1">
+                <Text weight="medium" color="cyan">
+                  {'Related'}
+                </Text>
+                <Heading size="6">関連記事</Heading>
+                <Text color="gray">
+                  同じテーマの読み物を3件までピックアップしました。
+                </Text>
+              </Flex>
+
+              <Grid columns={{ initial: '1', sm: '2', md: '3' }} gap="4">
+                {relatedArticles.map((related) => (
+                  <Card
+                    key={related.slug}
+                    variant="surface"
+                    size="3"
+                    asChild
+                    className={styles.relatedCard}
+                  >
+                    <Link
+                      href={`/posts/${related.slug}`}
+                      style={{ color: 'inherit', textDecoration: 'none' }}
+                    >
+                      <Flex direction="column" gap="3">
+                        <Inset clip="padding-box" side="top" pb="current">
+                          <Box
+                            className={styles.relatedCover}
+                            style={
+                              related.thumbnailUrl
+                                ? {
                                     backgroundImage: `url(${related.thumbnailUrl})`,
                                     backgroundSize: 'cover',
                                     backgroundPosition: 'center',
                                     backgroundRepeat: 'no-repeat',
                                   }
-                                  : undefined
-                              }
-                            >
-                              <Box style={{ paddingTop: '52%' }} />
-                            </Box>
-                          </Inset>
-                          <Flex direction="column" gap="1">
-                            <Heading size="4">{related.title}</Heading>
-                            <Text color="gray" size="2">
-                              {formatDate(related.date)}
-                            </Text>
-                          </Flex>
-                          <Flex gap="2" wrap="wrap">
-                            {related.tags.map((tag) => (
-                              <Badge
-                                key={tag.id}
-                                color="cyan"
-                                variant="soft"
-                                radius="medium"
-                                className={styles.tagBadge}
-                              >
-                                {tag.label}
-                              </Badge>
-                            ))}
-                          </Flex>
+                                : undefined
+                            }
+                          >
+                            <Box style={{ paddingTop: '52%' }} />
+                          </Box>
+                        </Inset>
+                        <Flex direction="column" gap="1">
+                          <Heading size="4">{related.title}</Heading>
+                          <Text color="gray" size="2">
+                            {formatDate(related.date)}
+                          </Text>
                         </Flex>
-                      </Link>
-                    </Card>
-                  ))}
-                </Grid>
-              </Flex>
-            ) : null}
-          </Flex>
-        </Box>
+                        <Flex gap="2" wrap="wrap">
+                          {related.tags.map((tag) => (
+                            <Badge
+                              key={tag.id}
+                              color="cyan"
+                              variant="soft"
+                              radius="medium"
+                              className={styles.tagBadge}
+                            >
+                              {tag.label}
+                            </Badge>
+                          ))}
+                        </Flex>
+                      </Flex>
+                    </Link>
+                  </Card>
+                ))}
+              </Grid>
+            </Flex>
+          ) : null}
+        </Flex>
       </Box>
 
       <script

@@ -132,7 +132,7 @@ export const fetchTagById = async (id: string) => {
       contentId: id,
     });
     return tag.parse(result);
-  } catch (e) {
+  } catch (_e) {
     return null;
   }
 };

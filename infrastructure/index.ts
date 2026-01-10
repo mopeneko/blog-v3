@@ -28,13 +28,17 @@ const prodNatGateway = new oci.core.NatGateway('prod-nat-gateway', {
   compartmentId: prodCompartment.id,
   vcnId: prodVcn.id,
   displayName: 'prod-nat-gateway',
-})
+});
+
+const allService = oci.core.getServicesOutput().apply((result) => {
+  return result.services.find((service) => service.name.startsWith('All '));
+});
 
 const prodServiceGateway = new oci.core.ServiceGateway('prod-sgw', {
   compartmentId: prodCompartment.id,
   vcnId: prodVcn.id,
-  services: oci.core.getServicesOutput().apply((result) => {
-    return [{ serviceId: result.services.find((service) => service.name.startsWith('All '))!.id }];
+  services: allService.apply((result) => {
+    return result?.id ? [{ serviceId: result.id }] : [];
   }),
   displayName: 'prod-sgw',
 });
@@ -42,7 +46,7 @@ const prodServiceGateway = new oci.core.ServiceGateway('prod-sgw', {
 const prodDynamicRoutingGateway = new oci.core.Drg('prod-drg', {
   compartmentId: prodCompartment.id,
   displayName: 'prod-drg',
-})
+});
 
 const prodRouteTable = new oci.core.RouteTable('prod-rtb', {
   compartmentId: prodCompartment.id,
@@ -69,8 +73,8 @@ const prodRouteTablePrivate = new oci.core.RouteTable('prod-rtb-private', {
     },
     {
       networkEntityId: prodServiceGateway.id,
-      destination: oci.core.getServicesOutput().apply((result) => {
-        return result.services.find((service) => service.name.startsWith('All '))!.cidrBlock;
+      destination: allService.apply((result) => {
+        return result?.cidrBlock || '';
       }),
       destinationType: 'SERVICE_CIDR_BLOCK',
     },
@@ -209,6 +213,7 @@ const containerNsg = new oci.core.NetworkSecurityGroup('container-nsg', {
 });
 
 // Allow all egress
+// biome-ignore lint/correctness/noUnusedVariables: oci resource
 const nsgEgressRule = new oci.core.NetworkSecurityGroupSecurityRule(
   'container-nsg-egress',
   {
@@ -222,6 +227,7 @@ const nsgEgressRule = new oci.core.NetworkSecurityGroupSecurityRule(
 );
 
 // Allow ingress on port 80 for your app
+// biome-ignore lint/correctness/noUnusedVariables: oci resource
 const nsgIngressRule = new oci.core.NetworkSecurityGroupSecurityRule(
   'container-nsg-ingress-http',
   {
@@ -295,15 +301,12 @@ const containerInstance = new oci.containerengine.ContainerInstance(
 
 export const containerInstanceID = containerInstance.id;
 
-const nlb = new oci.networkloadbalancer.NetworkLoadBalancer(
-  'mope-blog-nlb',
-  {
-    compartmentId: prodCompartment.id,
-    displayName: 'mope-blog-nlb',
-    subnetId: prodPublicSubnet.id,
-    isPrivate: false,
-  },
-);
+const nlb = new oci.networkloadbalancer.NetworkLoadBalancer('mope-blog-nlb', {
+  compartmentId: prodCompartment.id,
+  displayName: 'mope-blog-nlb',
+  subnetId: prodPublicSubnet.id,
+  isPrivate: false,
+});
 
 const nlbBackendSet = new oci.networkloadbalancer.BackendSet(
   'mope-blog-nlb-backend-set',
@@ -311,35 +314,36 @@ const nlbBackendSet = new oci.networkloadbalancer.BackendSet(
     name: 'mope-blog-nlb-backend-set',
     networkLoadBalancerId: nlb.id,
     healthChecker: {
-      protocol: "HTTP",
+      protocol: 'HTTP',
       port: 80,
       returnCode: 200,
-      urlPath: "/health",
+      urlPath: '/health',
     },
-    policy: "FIVE_TUPLE",
+    policy: 'FIVE_TUPLE',
   },
 );
 
+// biome-ignore lint/correctness/noUnusedVariables: oci resource
 const nlbBackend = new oci.networkloadbalancer.Backend(
-  "mope-blog-nlb-backend",
+  'mope-blog-nlb-backend',
   {
-    name: "mope-blog-nlb-backend",
+    name: 'mope-blog-nlb-backend',
     networkLoadBalancerId: nlb.id,
     backendSetName: nlbBackendSet.name,
     ipAddress: containerInstance.vnics[0].privateIp,
     port: 80,
     weight: 1,
-  }
+  },
 );
 
+// biome-ignore lint/correctness/noUnusedVariables: oci resource
 const nlbListener = new oci.networkloadbalancer.Listener(
-  "mope-blog-nlb-listener",
+  'mope-blog-nlb-listener',
   {
-    name: "mope-blog-nlb-listener",
+    name: 'mope-blog-nlb-listener',
     networkLoadBalancerId: nlb.id,
     port: 80,
-    protocol: "TCP",
+    protocol: 'TCP',
     defaultBackendSetName: nlbBackendSet.name,
-  }
-)
-
+  },
+);
