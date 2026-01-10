@@ -36,15 +36,11 @@ export default async function Home() {
   }));
 
   return (
-    <Box className={styles.pageContainer}>
-      <Box style={{ maxWidth: '1100px', margin: '0 auto' }}>
-        <Flex direction="column" gap="4">
-          <Flex direction="column" gap="2">
-            <Text weight="medium" color="cyan">
-              {'もぺブログ'}
-            </Text>
-            <Heading size="8">最新の記事</Heading>
-          </Flex>
+    <Box style={{ maxWidth: '1100px', margin: '0 auto', width: '100%' }}>
+      <Flex direction="column" gap="4">
+        <Flex direction="column" gap="2">
+          <Heading size="8">最新の記事</Heading>
+        </Flex>
 
           <Grid columns={{ initial: '1', sm: '2', md: '3' }} gap="4">
             {articles.map((article, i) => {
@@ -142,7 +138,6 @@ export default async function Home() {
             })}
           </Grid>
         </Flex>
-      </Box>
     </Box>
   );
 }

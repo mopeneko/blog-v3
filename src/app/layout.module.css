@@ -1,0 +1,11 @@
+
+.pageContainer {
+  padding: 32px 20px;
+}
+
+@media (max-width: 640px) {
+  .pageContainer {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+}

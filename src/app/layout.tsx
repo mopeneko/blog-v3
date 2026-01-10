@@ -1,7 +1,9 @@
 import type { Metadata } from 'next';
 import Script from 'next/script';
 import '@radix-ui/themes/styles.css';
-import { Theme } from '@radix-ui/themes';
+import { Box, Flex, Text, Theme } from '@radix-ui/themes';
+import Link from 'next/link';
+import styles from './layout.module.css';
 
 export const metadata: Metadata = {
   title: 'もぺブログ',
@@ -32,7 +34,29 @@ export default function RootLayout({
   return (
     <html lang="ja" data-theme="pastel">
       <body>
-        <Theme>{children}</Theme>
+        <Theme>
+          <Box className={styles.pageContainer}>
+            <Flex direction="column" gap="4">
+              <Box
+                style={{
+                  maxWidth: '1100px',
+                  margin: '0 auto',
+                  width: '100%',
+                }}
+              >
+                <Link
+                  href="/"
+                  style={{ color: 'inherit', textDecoration: 'none' }}
+                >
+                  <Text weight="medium" color="cyan">
+                    {'もぺブログ'}
+                  </Text>
+                </Link>
+              </Box>
+              {children}
+            </Flex>
+          </Box>
+        </Theme>
         {process.env.NODE_ENV === 'production' && (
           <>
             <Script

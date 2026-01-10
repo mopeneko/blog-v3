@@ -221,9 +221,8 @@ export default async function PostPage(props: PageProps<'/posts/[id]'>) {
 
   return (
     <>
-      <Box className={styles.pageContainer}>
-        <Box style={{ maxWidth: '900px', margin: '0 auto' }}>
-          <Flex direction="column" gap="5">
+      <Box style={{ maxWidth: '900px', margin: '0 auto', width: '100%' }}>
+        <Flex direction="column" gap="5">
             <Card variant="surface" size="4" className={styles.heroCard}>
               <Flex direction="column" gap="4">
                 <Inset clip="padding-box" side="top" pb="current">
@@ -415,7 +414,6 @@ export default async function PostPage(props: PageProps<'/posts/[id]'>) {
               </Flex>
             ) : null}
           </Flex>
-        </Box>
       </Box>
 
       <script
