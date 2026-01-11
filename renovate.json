@@ -1,0 +1,68 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended", ":disableDependencyDashboard"],
+  "platform": "gitea",
+  "timezone": "Asia/Tokyo",
+  "schedule": ["before 10am on monday"],
+  "labels": ["dependencies"],
+  "prConcurrentLimit": 10,
+  "lockFileMaintenance": {
+    "enabled": true,
+    "schedule": ["before 10am on monday"]
+  },
+  "packageRules": [
+    {
+      "description": "Next.js フレームワーク",
+      "groupName": "next-framework",
+      "matchPackageNames": ["next", "eslint-config-next"]
+    },
+    {
+      "description": "React エコシステム",
+      "groupName": "react",
+      "matchPackageNames": ["react", "react-dom"],
+      "matchPackagePatterns": ["^@types/react"]
+    },
+    {
+      "description": "コンテンツ処理",
+      "groupName": "content-processing",
+      "matchPackageNames": ["microcms-js-sdk", "zod"],
+      "matchPackagePatterns": ["^rehype", "^unist-util-", "^hast-util-"]
+    },
+    {
+      "description": "スタイリング",
+      "groupName": "styling",
+      "matchPackageNames": ["tailwindcss", "postcss", "daisyui"],
+      "matchPackagePatterns": ["^@tailwindcss/", "^@radix-ui/"]
+    },
+    {
+      "description": "テスト",
+      "groupName": "testing",
+      "matchPackageNames": ["vitest", "jsdom"],
+      "matchPackagePatterns": ["^@vitest/", "^@testing-library/", "^@vitejs/"]
+    },
+    {
+      "description": "Lint/フォーマット",
+      "groupName": "linting-formatting",
+      "matchPackageNames": ["eslint", "typescript"],
+      "matchPackagePatterns": ["^@biomejs/", "^@eslint/"]
+    },
+    {
+      "description": "型定義 (React以外)",
+      "groupName": "types",
+      "matchPackageNames": ["@types/node", "@types/hast"]
+    },
+    {
+      "description": "Cloudflare デプロイ",
+      "groupName": "cloudflare",
+      "matchPackageNames": ["wrangler"],
+      "matchPackagePatterns": ["^@opennextjs/"]
+    },
+    {
+      "description": "Pulumi インフラ",
+      "groupName": "pulumi",
+      "matchFileNames": ["infrastructure/package.json"],
+      "matchPackagePatterns": ["^@pulumi/"]
+    }
+  ],
+  "commitMessagePrefix": "deps:"
+}
