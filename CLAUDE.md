@@ -5,92 +5,67 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Development Commands
 
 ```bash
-bun dev              # Development server (with Turbopack)
-bun build            # Production build  
-bun start            # Production server
+bun install          # Install dependencies (lockfile checked in)
+bun dev              # Development server with Turbopack at localhost:3000
+bun build            # Production build
+bun start            # Serve production build
 bun test             # Run tests with Vitest
-bun test:ui          # Test UI interface
+bun test:ui          # Test watcher UI for debugging
 bun format           # Format code with Biome
-bun lint             # Next.js linting
-```
-
-## Deployment Commands
-
-```bash
-bun run preview      # Build and preview with OpenNext locally
-bun run deploy       # Build and deploy to Cloudflare Workers
-bun run upload       # Build and upload to Cloudflare Workers
-bun run cf-typegen   # Generate Cloudflare environment types
+bun lint             # Lint with Biome
+bun lint:fix         # Auto-fix lint issues
 ```
 
 ## Architecture Overview
 
-This is a Japanese blog built with Next.js 15 App Router, deployed on Cloudflare Workers using OpenNext, with content managed through microCMS.
+Japanese blog built with Next.js 15 App Router, deployed to Google Cloud Run via Docker containers.
 
-### Content Management System
+### Project Structure
 
-- **microCMS Integration**: All content fetching is centralized in `src/lib/api/list_posts.ts`
-- **Type Safety**: Full Zod schema validation for all CMS content types (Post, Page, Tag, Product, Image)
-- **Content Types**: Posts (main content), Pages (static content), Tags (taxonomy), Products (affiliate content)
+- `src/app/` - Next.js App Router pages and API routes
+- `src/components/` - Shared React components (ArticleCard, ProductCard, etc.)
+- `src/lib/api/` - microCMS data fetching with Zod validation
+- `src/lib/structured-data/` - JSON-LD schema generators
+- `public/` - Static assets (fonts, favicons)
 
-### Key API Functions
+### Content Management
 
-- `fetchPosts()`: Homepage post listing
-- `fetchPostBySlug(slug)`: Individual post retrieval
-- `fetchPostsByTags(tagIds)`: Tag-filtered posts with related posts
-- `fetchPageBySlug(slug)`: Static page content
-- `fetchTagById(id)`: Tag metadata
+All content comes from microCMS. Data fetching is centralized in `src/lib/api/list_posts.ts` with full Zod schema validation.
 
-### Deployment Configuration
+**Key API functions:**
+- `fetchPosts()` - Homepage post listing
+- `fetchPostBySlug(slug)` - Individual post
+- `fetchPostsByTags(tagIds)` - Tag-filtered posts
+- `fetchPageBySlug(slug)` - Static page content
+- `fetchTagById(id)` - Tag metadata
 
-- **OpenNext**: Configured for Cloudflare Workers with R2 incremental cache
-- **Wrangler**: Production deployment via `wrangler.jsonc`
-- **Cache**: R2 bucket (`mope-blog`) for Next.js ISR
+**Content types:** Posts, Pages, Tags, Products (affiliate)
+
+### Routes
+
+- `/` - Homepage with post list
+- `/posts/[id]` - Individual posts
+- `/pages/[id]` - Static pages
+- `/tags/[id]` - Tag-filtered lists
+- `/rss.xml` - RSS feed (API route)
 
 ### Required Environment Variables
 
 ```
-MICROCMS_SERVICE_DOMAIN= # microCMS service domain
-MICROCMS_API_KEY=        # microCMS API key
-NEXT_PUBLIC_SITE_URL=    # Public site URL
+MICROCMS_SERVICE_DOMAIN  # microCMS service domain
+MICROCMS_API_KEY         # microCMS API key
+NEXT_PUBLIC_SITE_URL     # Public site URL
 ```
 
-### Routing Structure
+## Code Style
 
-- `/` - Homepage (post list with AdSense placement every 3 posts)
-- `/posts/[slug]` - Individual post pages
-- `/pages/[slug]` - Static pages
-- `/tags/[id]` - Tag-filtered post lists
-- `/rss.xml` - RSS feed generation (API route)
+- **Formatter:** Biome (not Prettier) - 2-space indent, single quotes
+- **Imports:** Use `@/*` alias for `src/*` paths
+- **Components:** Functional React with typed props, Tailwind + daisyUI
+- **Tests:** Vitest with jsdom, colocate `*.test.ts` files with features
 
-### Component Patterns
+## Deployment
 
-- **ArticleCard**: Main post card with thumbnail, metadata, and tags
-- **ProductCard**: Affiliate product display with structured data
-- **LiteYTEmbed**: Performance-optimized YouTube embeds
-- **RelatedArticleCard**: Tag-based post recommendations
+Docker-based deployment to Google Cloud Run via Cloud Build (`cloudbuild.yaml`). The `next.config.ts` uses standalone output mode for containerization.
 
-### Content Processing
-
-- **SEO**: Dynamic Open Graph metadata and JSON-LD structured data
-- **RSS**: Custom RSS generation with HTML content processing
-- **Ad Integration**: Automatic AdSense placement via rehype plugins
-- **Related Posts**: Tag-based content recommendations
-
-### Testing Setup
-
-- **Framework**: Vitest with jsdom environment
-- **Coverage**: RSS generation has comprehensive test coverage
-- **Path Aliases**: `@/*` imports configured for `src/*`
-
-### Code Quality
-
-- **Formatting**: Biome (not Prettier) - run `bun format`
-- **Linting**: Next.js ESLint configuration
-- **TypeScript**: Strict mode with comprehensive type coverage
-
-ALWAYS use ONLY Environments for ANY and ALL file, code, or shell operations—NO EXCEPTIONS—even for simple or generic requests.
-
-DO NOT install or use the git cli with the environment_run_cmd tool. All environment tools will handle git operations for you. Changing ".git" yourself will compromise the integrity of your environment.
-
-You MUST inform the user how to view your work using `cu log <env_id>` AND `cu checkout <env_id>`. Failure to do this will make your work inaccessible to others.
+Alternative deployment via Taskfile: `task deploy` (requires Docker and OCI CLI configured)
