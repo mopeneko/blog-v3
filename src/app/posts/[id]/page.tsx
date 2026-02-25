@@ -24,6 +24,7 @@ import type { Root } from 'hast';
 import { visit } from 'unist-util-visit';
 import { rehype } from 'rehype';
 import type { AffiliateProduct } from '@/lib/affiliateProducts';
+import { rehypeExtractBodyContents } from '@/lib/rehype/extractBodyContents';
 import Image from 'next/image';
 
 const formatDate = (date: string) =>
@@ -182,6 +183,7 @@ export default async function PostPage(props: PageProps<'/posts/[id]'>) {
 
   const content = String(
     await rehype()
+      .use(rehypeExtractBodyContents)
       .use([rehypeInsertAdsPlugin, rehypeLiteYTPlugin])
       .process(detail.content),
   );

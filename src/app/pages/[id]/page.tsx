@@ -3,6 +3,8 @@ import type { Metadata } from 'next';
 import { fetchPageBySlug } from '@/lib/api/list_posts';
 import type { ArticleDetail } from '@/lib/articleDetails';
 import { notFound } from 'next/navigation';
+import { rehype } from 'rehype';
+import { rehypeExtractBodyContents } from '@/lib/rehype/extractBodyContents';
 import styles from './page.module.css';
 
 export async function generateMetadata(
@@ -77,6 +79,10 @@ export default async function Page(props: PageProps<'/pages/[id]'>) {
     notFound();
   }
 
+  const content = String(
+    await rehype().use(rehypeExtractBodyContents).process(detail.content),
+  );
+
   const heroThumbnailStyle = detail.thumbnailUrl
     ? {
         backgroundImage: `url(${detail.thumbnailUrl})`,
@@ -130,7 +136,7 @@ export default async function Page(props: PageProps<'/pages/[id]'>) {
             <Box
               className={styles.articleHtml}
               // biome-ignore lint/security/noDangerouslySetInnerHtml: CMSから記事本文がHTMLで返されるため
-              dangerouslySetInnerHTML={{ __html: detail.content }}
+              dangerouslySetInnerHTML={{ __html: content }}
             />
           </Card>
         </Flex>
