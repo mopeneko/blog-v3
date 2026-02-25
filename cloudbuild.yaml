@@ -56,11 +56,9 @@ steps:
       - "-i"
       - "-X"
       - "POST"
-      - "https://api.fastly.com/service/${_FASTLY_SERVICE_ID}/purge_all"
+      - "https://api.bunny.net/pullzone/${_BUNNY_PULL_ZONE_ID}/purgeCache"
       - "-H"
-      - "Fastly-Key: ${_FASTLY_API_KEY}"
-      - "-H"
-      - "Accept: application/json"
+      - "AccessKey: ${_BUNNY_API_KEY}"
 options:
   substitutionOption: ALLOW_LOOSE
   logging: CLOUD_LOGGING_ONLY
