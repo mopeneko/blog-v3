@@ -378,7 +378,7 @@ export default async function PostPage(props: PageProps<'/posts/[id]'>) {
                             style={
                               related.thumbnailUrl
                                 ? {
-                                    backgroundImage: `url(${related.thumbnailUrl})`,
+                                    backgroundImage: `url("${related.thumbnailUrl}")`,
                                     backgroundSize: 'cover',
                                     backgroundPosition: 'center',
                                     backgroundRepeat: 'no-repeat',

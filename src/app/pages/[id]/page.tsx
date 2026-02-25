@@ -85,7 +85,7 @@ export default async function Page(props: PageProps<'/pages/[id]'>) {
 
   const heroThumbnailStyle = detail.thumbnailUrl
     ? {
-        backgroundImage: `url(${detail.thumbnailUrl})`,
+        backgroundImage: `url("${detail.thumbnailUrl}")`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
