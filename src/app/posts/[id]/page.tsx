@@ -218,7 +218,7 @@ export default async function PostPage(props: PageProps<'/posts/[id]'>) {
 
   const heroThumbnailStyle = detail.thumbnailUrl
     ? {
-        backgroundImage: `url(\"${detail.thumbnailUrl}\")`,
+        backgroundImage: `url("${detail.thumbnailUrl}")`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',

@@ -97,7 +97,7 @@ export default async function TagPage(props: PageProps<'/tags/[id]'>) {
             <Grid columns={{ initial: '1', sm: '2', md: '3' }} gap="4">
               {taggedArticles.map((article) => {
                 const thumbnailBackground = article.thumbnailUrl
-                  ? `url(\"${article.thumbnailUrl}\")`
+                  ? `url("${article.thumbnailUrl}")`
                   : 'linear-gradient(135deg, #e3f5ff, #9bd7ff)';
 
                 return (
