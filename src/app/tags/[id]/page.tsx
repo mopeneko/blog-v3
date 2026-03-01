@@ -7,7 +7,7 @@ import {
   Heading,
   Inset,
   Text,
-} from '@radix-ui/themes';
+} from '@/components/radix';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';

@@ -1,4 +1,4 @@
-import { Box, Card, Flex, Heading, Inset, Text } from '@radix-ui/themes';
+import { Box, Card, Flex, Heading, Inset, Text } from '@/components/radix';
 import type { Metadata } from 'next';
 import { fetchPageBySlug } from '@/lib/api/list_posts';
 import type { ArticleDetail } from '@/lib/articleDetails';
@@ -19,12 +19,14 @@ export async function generateMetadata(
     };
   }
 
-  const image = page.thumbnail
-    ? {
-        url: page.thumbnail.url,
-        width: page.thumbnail.width,
-        height: page.thumbnail.height,
-      }
+  const images = page.thumbnail
+    ? [
+        {
+          url: page.thumbnail.url,
+          width: page.thumbnail.width,
+          height: page.thumbnail.height,
+        },
+      ]
     : undefined;
   return {
     title: `${page.title} - もぺブログ`,
@@ -33,14 +35,14 @@ export async function generateMetadata(
       url: `${process.env.NEXT_PUBLIC_SITE_URL}/pages/${id}`,
       title: `${page.title} - もぺブログ`,
       siteName: 'もぺブログ',
-      images: image,
+      images,
     },
     twitter: {
       card: 'summary_large_image',
       site: '@nkyna_',
       creator: '@nkyna_',
       title: `${page.title} - もぺブログ`,
-      images: image,
+      images,
     },
     alternates: {
       types: {

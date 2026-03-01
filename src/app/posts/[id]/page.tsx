@@ -8,7 +8,7 @@ import {
   Heading,
   Inset,
   Text,
-} from '@radix-ui/themes';
+} from '@/components/radix';
 import type { Metadata } from 'next';
 import 'lite-youtube-embed/src/lite-yt-embed.css';
 import Link from 'next/link';
@@ -124,12 +124,14 @@ export async function generateMetadata(
     };
   }
 
-  const image = post.thumbnail
-    ? {
-        url: post.thumbnail.url,
-        width: post.thumbnail.width,
-        height: post.thumbnail.height,
-      }
+  const images = post.thumbnail
+    ? [
+        {
+          url: post.thumbnail.url,
+          width: post.thumbnail.width,
+          height: post.thumbnail.height,
+        },
+      ]
     : undefined;
   return {
     title: `${post.title} - もぺブログ`,
@@ -138,14 +140,14 @@ export async function generateMetadata(
       url: `${process.env.NEXT_PUBLIC_SITE_URL}/posts/${id}`,
       title: `${post.title} - もぺブログ`,
       siteName: 'もぺブログ',
-      images: image,
+      images,
     },
     twitter: {
       card: 'summary_large_image',
       site: '@nkyna_',
       creator: '@nkyna_',
       title: `${post.title} - もぺブログ`,
-      images: image,
+      images,
     },
     alternates: {
       types: {

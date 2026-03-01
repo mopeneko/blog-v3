@@ -7,7 +7,7 @@ import {
   Heading,
   Inset,
   Text,
-} from '@radix-ui/themes';
+} from '@/components/radix';
 import { fetchPosts } from '@/lib/api/list_posts';
 import type { Article } from '@/lib/article';
 import Link from 'next/link';

@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Script from 'next/script';
 import '@radix-ui/themes/styles.css';
-import { Box, Flex, Text, Theme } from '@radix-ui/themes';
+import { Box, Flex, Text, Theme } from '@/components/radix';
 import Link from 'next/link';
 import styles from './layout.module.css';
 
