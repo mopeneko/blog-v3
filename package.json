@@ -10,7 +10,8 @@
     "lint:fix": "biome lint --write",
     "format": "biome format --write",
     "test": "vitest",
-    "test:ui": "vitest --ui"
+    "test:ui": "vitest --ui",
+    "deploy": "vinext deploy"
   },
   "dependencies": {
     "@radix-ui/themes": "^3.2.1",
