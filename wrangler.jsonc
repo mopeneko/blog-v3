@@ -16,5 +16,11 @@
   },
   "vars": {
     "NEXT_PUBLIC_SITE_URL": "https://www.mope-blog.com"
-  }
+  },
+  "routes": [
+    {
+      "pattern": "www.mope-blog.com",
+      "custom_domain": true
+    }
+  ]
 }
