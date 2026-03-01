@@ -332,7 +332,7 @@ export default async function PostPage(props: PageProps<'/posts/[id]'>) {
                             <Link
                               href={link.href}
                               target="_blank"
-                              rel="noreferrer noopener sponsored"
+                              rel="sponsored"
                             >
                               {link.label}
                             </Link>
