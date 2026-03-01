@@ -46,10 +46,16 @@ const post = z
   })
   .merge(content);
 
-const client = createClient({
-  serviceDomain: process.env.MICROCMS_SERVICE_DOMAIN ?? '',
-  apiKey: process.env.MICROCMS_API_KEY ?? '',
-});
+let _client: ReturnType<typeof createClient> | undefined;
+function getClient() {
+  if (!_client) {
+    _client = createClient({
+      serviceDomain: process.env.MICROCMS_SERVICE_DOMAIN ?? '',
+      apiKey: process.env.MICROCMS_API_KEY ?? '',
+    });
+  }
+  return _client;
+}
 
 const ENDPOINT_POST = 'post';
 const ENDPOINT_PAGES = 'pages';
@@ -71,7 +77,7 @@ const page = z
 type Page = z.infer<typeof page>;
 
 export const fetchPosts = async () => {
-  const result = await client.getList<Post>({
+  const result = await getClient().getList<Post>({
     endpoint: ENDPOINT_POST,
     queries: {
       orders: '-published_at',
@@ -83,7 +89,7 @@ export const fetchPosts = async () => {
 };
 
 export const fetchPostBySlug = async (slug: string) => {
-  const result = await client.getList<Post>({
+  const result = await getClient().getList<Post>({
     endpoint: ENDPOINT_POST,
     queries: {
       filters: `slug[equals]${slug}`,
@@ -98,7 +104,7 @@ export const fetchPostBySlug = async (slug: string) => {
 };
 
 export const fetchPostsByTags = async (tags: string[], limit?: number) => {
-  const result = await client.getList<Post>({
+  const result = await getClient().getList<Post>({
     endpoint: ENDPOINT_POST,
     queries: {
       filters: `tags[contains]${tags.join('[or]')}`,
@@ -111,7 +117,7 @@ export const fetchPostsByTags = async (tags: string[], limit?: number) => {
 };
 
 export const fetchPageBySlug = async (slug: string) => {
-  const result = await client.getList<Page>({
+  const result = await getClient().getList<Page>({
     endpoint: ENDPOINT_PAGES,
     queries: {
       filters: `slug[equals]${slug}`,
@@ -127,7 +133,7 @@ export const fetchPageBySlug = async (slug: string) => {
 
 export const fetchTagById = async (id: string) => {
   try {
-    const result = await client.get<Tag>({
+    const result = await getClient().get<Tag>({
       endpoint: ENDPOINT_TAG,
       contentId: id,
     });
