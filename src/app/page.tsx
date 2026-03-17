@@ -19,7 +19,7 @@ const formatDate = (date: string) =>
     year: 'numeric',
     month: 'short',
     day: 'numeric',
-    timeZone: "JST",
+    timeZone: 'JST',
   });
 
 export default async function Home() {
