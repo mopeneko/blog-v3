@@ -58,12 +58,10 @@ export default function RootLayout({
           </Box>
         </Theme>
         {process.env.NODE_ENV === 'production' && (
-          <>
-            <Script
-              src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3857753364740983"
-              crossOrigin="anonymous"
-            />
-          </>
+          <Script
+            src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3857753364740983"
+            crossOrigin="anonymous"
+          />
         )}
       </body>
     </html>
