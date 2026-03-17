@@ -2,5 +2,11 @@
   "permissions": {
     "allow": ["Bash(bun:*)", "Bash(ls:*)", "Bash(grep:*)", "Bash(find:*)"],
     "deny": []
+  },
+  "mcpServers": {
+    "vite-plus": {
+      "command": "npx",
+      "args": ["vp", "mcp"]
+    }
   }
 }

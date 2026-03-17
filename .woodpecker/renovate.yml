@@ -10,7 +10,7 @@ steps:
       RENOVATE_ENDPOINT: https://codeberg.org/api/v1
       RENOVATE_TOKEN:
         from_secret: codeberg_token
-      RENOVATE_GIT_AUTHOR: "Renovate Bot <renovate@example.com>"
+      RENOVATE_GIT_AUTHOR: 'Renovate Bot <renovate@example.com>'
       LOG_LEVEL: info
     commands:
       - renovate --autodiscover=false ${CI_REPO}

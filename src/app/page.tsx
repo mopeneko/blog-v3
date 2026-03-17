@@ -1,13 +1,4 @@
-import {
-  Badge,
-  Box,
-  Card,
-  Flex,
-  Grid,
-  Heading,
-  Inset,
-  Text,
-} from '@/components/radix';
+import { Badge, Box, Card, Flex, Grid, Heading, Inset, Text } from '@/components/radix';
 import { fetchPosts } from '@/lib/api/list_posts';
 import type { Article } from '@/lib/article';
 import Link from 'next/link';
@@ -64,8 +55,7 @@ export default async function Home() {
                     <script
                       // biome-ignore lint/security/noDangerouslySetInnerHtml: For Google AdSense ad unit
                       dangerouslySetInnerHTML={{
-                        __html:
-                          '(adsbygoogle = window.adsbygoogle || []).push({});',
+                        __html: '(adsbygoogle = window.adsbygoogle || []).push({});',
                       }}
                     />
                   </>

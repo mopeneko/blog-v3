@@ -7,24 +7,24 @@
   "assets": {
     "directory": "dist/client",
     "not_found_handling": "none",
-    "binding": "ASSETS"
+    "binding": "ASSETS",
   },
   "images": {
-    "binding": "IMAGES"
+    "binding": "IMAGES",
   },
   "vars": {
-    "NEXT_PUBLIC_SITE_URL": "https://www.mope-blog.com"
+    "NEXT_PUBLIC_SITE_URL": "https://www.mope-blog.com",
   },
   "routes": [
     {
       "pattern": "www.mope-blog.com",
-      "custom_domain": true
-    }
+      "custom_domain": true,
+    },
   ],
   "observability": {
     "logs": {
       "enabled": true,
-      "invocation_logs": true
-    }
-  }
+      "invocation_logs": true,
+    },
+  },
 }

@@ -138,6 +138,7 @@ export const fetchTagById = async (id: string) => {
       contentId: id,
     });
     return tag.parse(result);
+    /* oxlint-disable-next-line no-unused-vars */
   } catch (_e) {
     return null;
   }

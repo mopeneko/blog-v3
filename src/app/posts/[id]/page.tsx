@@ -1,15 +1,6 @@
-import {
-  Badge,
-  Box,
-  Button,
-  Card,
-  Flex,
-  Grid,
-  Heading,
-  Inset,
-  Text,
-} from '@/components/radix';
+import { Badge, Box, Button, Card, Flex, Grid, Heading, Inset, Text } from '@/components/radix';
 import type { Metadata } from 'next';
+// @ts-ignore
 import 'lite-youtube-embed/src/lite-yt-embed.css';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
@@ -93,14 +84,8 @@ const rehypeInsertAdsPlugin = () => {
 const rehypeLiteYTPlugin = () => {
   return (tree: Root) => {
     visit(tree, 'element', (node) => {
-      if (
-        node.tagName === 'p' &&
-        node.children.length > 0 &&
-        node.children[0].type === 'text'
-      ) {
-        const matches = node.children[0].value.match(
-          /<lite-youtube videoid="([a-zA-z0-9_-]+)">/,
-        );
+      if (node.tagName === 'p' && node.children.length > 0 && node.children[0].type === 'text') {
+        const matches = node.children[0].value.match(/<lite-youtube videoid="([a-zA-z0-9_-]+)">/);
         if (!matches) {
           return;
         }
@@ -113,9 +98,7 @@ const rehypeLiteYTPlugin = () => {
   };
 };
 
-export async function generateMetadata(
-  props: PageProps<'/posts/[id]'>,
-): Promise<Metadata> {
+export async function generateMetadata(props: PageProps<'/posts/[id]'>): Promise<Metadata> {
   const { id } = await props.params;
   const post = await fetchPostBySlug(id);
 
@@ -251,18 +234,11 @@ export default async function PostPage(props: PageProps<'/posts/[id]'>) {
                       className={styles.tagBadge}
                       asChild
                     >
-                      <Link href={`/tags/${encodeURIComponent(tag.id)}`}>
-                        {tag.label}
-                      </Link>
+                      <Link href={`/tags/${encodeURIComponent(tag.id)}`}>{tag.label}</Link>
                     </Badge>
                   ))}
                 </Flex>
-                <Flex
-                  gap="3"
-                  align="center"
-                  wrap="wrap"
-                  className={styles.meta}
-                >
+                <Flex gap="3" align="center" wrap="wrap" className={styles.meta}>
                   <Text color="gray" size="2">
                     公開: {formatDate(detail.date)}
                   </Text>
@@ -293,20 +269,12 @@ export default async function PostPage(props: PageProps<'/posts/[id]'>) {
           </Card>
 
           {affiliateProduct ? (
-            <Flex
-              direction="column"
-              gap="2"
-              className={styles.affiliateSection}
-            >
+            <Flex direction="column" gap="2" className={styles.affiliateSection}>
               <Text size="2" color="gray" className={styles.affiliateLabel}>
                 スポンサーリンク
               </Text>
               <Card variant="surface" size="4" className={styles.affiliateCard}>
-                <Flex
-                  direction={{ initial: 'column', sm: 'row' }}
-                  gap="4"
-                  align="center"
-                >
+                <Flex direction={{ initial: 'column', sm: 'row' }} gap="4" align="center">
                   <Box className={styles.affiliateThumbnail}>
                     <Image
                       width={128}
@@ -325,18 +293,8 @@ export default async function PostPage(props: PageProps<'/posts/[id]'>) {
                     {affiliateProduct.links.length > 0 ? (
                       <Flex gap="2" wrap="wrap">
                         {affiliateProduct.links.map((link) => (
-                          <Button
-                            key={link.href}
-                            color="cyan"
-                            size="3"
-                            radius="large"
-                            asChild
-                          >
-                            <Link
-                              href={link.href}
-                              target="_blank"
-                              rel="sponsored"
-                            >
+                          <Button key={link.href} color="cyan" size="3" radius="large" asChild>
+                            <Link href={link.href} target="_blank" rel="sponsored">
                               {link.label}
                             </Link>
                           </Button>
@@ -356,9 +314,7 @@ export default async function PostPage(props: PageProps<'/posts/[id]'>) {
                   {'Related'}
                 </Text>
                 <Heading size="6">関連記事</Heading>
-                <Text color="gray">
-                  同じテーマの読み物を3件までピックアップしました。
-                </Text>
+                <Text color="gray">同じテーマの読み物を3件までピックアップしました。</Text>
               </Flex>
 
               <Grid columns={{ initial: '1', sm: '2', md: '3' }} gap="4">

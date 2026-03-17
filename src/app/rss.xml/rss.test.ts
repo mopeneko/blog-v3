@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vite-plus/test';
 import { generateRSSFeed } from './rss';
 import type { Post } from '@/lib/api/list_posts';
 
@@ -77,12 +77,8 @@ describe('generateRSSFeed', () => {
     expect(items.length).toBe(1);
 
     const item = items[0];
-    expect(item.getElementsByTagName('title')[0].textContent).toBe(
-      'テスト投稿',
-    );
-    expect(item.getElementsByTagName('link')[0].textContent).toBe(
-      `${SITE_URL}/posts/test-post`,
-    );
+    expect(item.getElementsByTagName('title')[0].textContent).toBe('テスト投稿');
+    expect(item.getElementsByTagName('link')[0].textContent).toBe(`${SITE_URL}/posts/test-post`);
     expect(item.getElementsByTagName('guid')[0].textContent).toBe('abc123');
     expect(item.getElementsByTagName('pubDate')[0].textContent).toBe(
       new Date('2024-05-01T12:00:00Z').toUTCString(),
@@ -130,12 +126,8 @@ describe('generateRSSFeed', () => {
     const doc = parseXml(rss);
     const items = doc.getElementsByTagName('item');
     expect(items.length).toBe(2);
-    expect(items[0].getElementsByTagName('title')[0].textContent).toBe(
-      '最新記事',
-    );
-    expect(items[1].getElementsByTagName('title')[0].textContent).toBe(
-      '前の記事',
-    );
+    expect(items[0].getElementsByTagName('title')[0].textContent).toBe('最新記事');
+    expect(items[1].getElementsByTagName('title')[0].textContent).toBe('前の記事');
   });
 
   it('titleやcontentにXML特殊文字が含まれる場合、正しくエスケープされる', () => {

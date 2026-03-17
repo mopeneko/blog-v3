@@ -3,26 +3,26 @@ steps:
     name: gcr.io/cloud-builders/docker
     entrypoint: bash
     args:
-      - "-c"
-      - "docker pull $_AR_HOSTNAME/$_AR_PROJECT_ID/$_AR_REPOSITORY/$REPO_NAME/$_SERVICE_NAME:latest || exit 0"
+      - '-c'
+      - 'docker pull $_AR_HOSTNAME/$_AR_PROJECT_ID/$_AR_REPOSITORY/$REPO_NAME/$_SERVICE_NAME:latest || exit 0'
   - id: Build
     name: gcr.io/cloud-builders/docker
     args:
       - build
-      - "--cache-from"
-      - "$_AR_HOSTNAME/$_AR_PROJECT_ID/$_AR_REPOSITORY/$REPO_NAME/$_SERVICE_NAME:latest"
-      - "-t"
-      - "$_AR_HOSTNAME/$_AR_PROJECT_ID/$_AR_REPOSITORY/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA"
-      - "-t"
-      - "$_AR_HOSTNAME/$_AR_PROJECT_ID/$_AR_REPOSITORY/$REPO_NAME/$_SERVICE_NAME:latest"
+      - '--cache-from'
+      - '$_AR_HOSTNAME/$_AR_PROJECT_ID/$_AR_REPOSITORY/$REPO_NAME/$_SERVICE_NAME:latest'
+      - '-t'
+      - '$_AR_HOSTNAME/$_AR_PROJECT_ID/$_AR_REPOSITORY/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA'
+      - '-t'
+      - '$_AR_HOSTNAME/$_AR_PROJECT_ID/$_AR_REPOSITORY/$REPO_NAME/$_SERVICE_NAME:latest'
       - .
-      - "-f"
+      - '-f'
       - Dockerfile
-      - "--build-arg"
+      - '--build-arg'
       - NEXT_PUBLIC_SITE_URL=$_NEXT_PUBLIC_SITE_URL
-      - "--build-arg"
+      - '--build-arg'
       - MICROCMS_SERVICE_DOMAIN=$_MICROCMS_SERVICE_DOMAIN
-      - "--build-arg"
+      - '--build-arg'
       - MICROCMS_API_KEY=$_MICROCMS_API_KEY
     env:
       - DOCKER_BUILDKIT=1
@@ -30,35 +30,35 @@ steps:
     name: gcr.io/cloud-builders/docker
     args:
       - push
-      - "$_AR_HOSTNAME/$_AR_PROJECT_ID/$_AR_REPOSITORY/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA"
+      - '$_AR_HOSTNAME/$_AR_PROJECT_ID/$_AR_REPOSITORY/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA'
   - id: Push Latest
     name: gcr.io/cloud-builders/docker
     args:
       - push
-      - "$_AR_HOSTNAME/$_AR_PROJECT_ID/$_AR_REPOSITORY/$REPO_NAME/$_SERVICE_NAME:latest"
+      - '$_AR_HOSTNAME/$_AR_PROJECT_ID/$_AR_REPOSITORY/$REPO_NAME/$_SERVICE_NAME:latest'
   - id: Deploy
-    name: "gcr.io/google.com/cloudsdktool/cloud-sdk:slim"
+    name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: gcloud
     args:
       - run
       - services
       - update
       - $_SERVICE_NAME
-      - "--platform=managed"
-      - "--image=$_AR_HOSTNAME/$_AR_PROJECT_ID/$_AR_REPOSITORY/$REPO_NAME/$_SERVICE_NAME:latest"
+      - '--platform=managed'
+      - '--image=$_AR_HOSTNAME/$_AR_PROJECT_ID/$_AR_REPOSITORY/$REPO_NAME/$_SERVICE_NAME:latest'
       - >-
         --labels=managed-by=gcp-cloud-build-deploy-cloud-run,commit-sha=$COMMIT_SHA,gcb-build-id=$BUILD_ID,gcb-trigger-id=$_TRIGGER_ID
-      - "--region=$_DEPLOY_REGION"
-      - "--quiet"
+      - '--region=$_DEPLOY_REGION'
+      - '--quiet'
   - id: Purge Fastly cache
     name: gcr.io/cloud-builders/curl
     args:
-      - "-i"
-      - "-X"
-      - "POST"
-      - "https://api.bunny.net/pullzone/${_BUNNY_PULL_ZONE_ID}/purgeCache"
-      - "-H"
-      - "AccessKey: ${_BUNNY_API_KEY}"
+      - '-i'
+      - '-X'
+      - 'POST'
+      - 'https://api.bunny.net/pullzone/${_BUNNY_PULL_ZONE_ID}/purgeCache'
+      - '-H'
+      - 'AccessKey: ${_BUNNY_API_KEY}'
 options:
   substitutionOption: ALLOW_LOOSE
   logging: CLOUD_LOGGING_ONLY
@@ -75,4 +75,4 @@ tags:
   - gcp-cloud-build-deploy-cloud-run-managed
   - blog-v3
 images:
-  - "$_AR_HOSTNAME/$_AR_PROJECT_ID/$_AR_REPOSITORY/$REPO_NAME/$_SERVICE_NAME:latest"
+  - '$_AR_HOSTNAME/$_AR_PROJECT_ID/$_AR_REPOSITORY/$REPO_NAME/$_SERVICE_NAME:latest'

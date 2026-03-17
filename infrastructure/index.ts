@@ -186,25 +186,20 @@ const prodPrivateSubnet = new oci.core.Subnet('prod-private-subnet', {
   securityListIds: [prodSecurityListPrivate.id],
 });
 
-const containerRepository = new oci.artifacts.ContainerRepository(
-  'mope-blog-repo/mope-blog',
-  {
-    compartmentId: prodCompartment.id,
-    displayName: 'mope-blog-repo/mope-blog',
-    isImmutable: false,
-    isPublic: false,
-  },
-);
+const containerRepository = new oci.artifacts.ContainerRepository('mope-blog-repo/mope-blog', {
+  compartmentId: prodCompartment.id,
+  displayName: 'mope-blog-repo/mope-blog',
+  isImmutable: false,
+  isPublic: false,
+});
 
 const availabilityDomains = oci.identity.getAvailabilityDomainsOutput({
   compartmentId: prodCompartment.id,
 });
 
-export const availabilityDomain = availabilityDomains.availabilityDomains.apply(
-  (result) => {
-    return result[0].name;
-  },
-);
+export const availabilityDomain = availabilityDomains.availabilityDomains.apply((result) => {
+  return result[0].name;
+});
 
 const containerNsg = new oci.core.NetworkSecurityGroup('container-nsg', {
   compartmentId: prodCompartment.id,
@@ -213,22 +208,17 @@ const containerNsg = new oci.core.NetworkSecurityGroup('container-nsg', {
 });
 
 // Allow all egress
-// biome-ignore lint/correctness/noUnusedVariables: oci resource
-const nsgEgressRule = new oci.core.NetworkSecurityGroupSecurityRule(
-  'container-nsg-egress',
-  {
-    networkSecurityGroupId: containerNsg.id,
-    direction: 'EGRESS',
-    protocol: 'all',
-    destination: '0.0.0.0/0',
-    destinationType: 'CIDR_BLOCK',
-    stateless: false,
-  },
-);
+const _nsgEgressRule = new oci.core.NetworkSecurityGroupSecurityRule('container-nsg-egress', {
+  networkSecurityGroupId: containerNsg.id,
+  direction: 'EGRESS',
+  protocol: 'all',
+  destination: '0.0.0.0/0',
+  destinationType: 'CIDR_BLOCK',
+  stateless: false,
+});
 
 // Allow ingress on port 80 for your app
-// biome-ignore lint/correctness/noUnusedVariables: oci resource
-const nsgIngressRule = new oci.core.NetworkSecurityGroupSecurityRule(
+const _nsgIngressRule = new oci.core.NetworkSecurityGroupSecurityRule(
   'container-nsg-ingress-http',
   {
     networkSecurityGroupId: containerNsg.id,
@@ -248,56 +238,49 @@ const nsgIngressRule = new oci.core.NetworkSecurityGroupSecurityRule(
 
 const registryEndpoint = `ocir.${ociConfig.require('region')}.oci.oraclecloud.com`;
 
-const containerInstance = new oci.containerengine.ContainerInstance(
-  'mope-blog',
-  {
-    availabilityDomain: availabilityDomain,
-    compartmentId: prodCompartment.id,
-    containers: [
-      {
-        imageUrl: pulumi.interpolate`${registryEndpoint}/${containerRepository.namespace}/${containerRepository.displayName}:latest`,
-        healthChecks: [
-          {
-            healthCheckType: 'HTTP',
-            path: '/health',
-            port: 80,
-          },
-        ],
-        environmentVariables: {
-          NEXT_PUBLIC_SITE_URL: config.require('siteUrl'),
-          MICROCMS_SERVICE_DOMAIN: config.require('microcmsServiceDomain'),
-          MICROCMS_API_KEY: config.require('microcmsApiKey'),
-          PORT: '80',
+const containerInstance = new oci.containerengine.ContainerInstance('mope-blog', {
+  availabilityDomain: availabilityDomain,
+  compartmentId: prodCompartment.id,
+  containers: [
+    {
+      imageUrl: pulumi.interpolate`${registryEndpoint}/${containerRepository.namespace}/${containerRepository.displayName}:latest`,
+      healthChecks: [
+        {
+          healthCheckType: 'HTTP',
+          path: '/health',
+          port: 80,
         },
+      ],
+      environmentVariables: {
+        NEXT_PUBLIC_SITE_URL: config.require('siteUrl'),
+        MICROCMS_SERVICE_DOMAIN: config.require('microcmsServiceDomain'),
+        MICROCMS_API_KEY: config.require('microcmsApiKey'),
+        PORT: '80',
       },
-    ],
-    imagePullSecrets: [
-      {
-        secretType: 'BASIC',
-        registryEndpoint: registryEndpoint,
-        username: Buffer.from(config.require('pullerUsername')).toString(
-          'base64',
-        ),
-        password: Buffer.from(config.require('pullerPassword')).toString(
-          'base64',
-        ),
-      },
-    ],
-    shape: 'CI.Standard.E4.Flex',
-    shapeConfig: {
-      ocpus: 1,
-      memoryInGbs: 1,
     },
-    vnics: [
-      {
-        subnetId: prodPrivateSubnet.id,
-        nsgIds: [containerNsg.id],
-        isPublicIpAssigned: false,
-      },
-    ],
-    displayName: 'mope-blog',
+  ],
+  imagePullSecrets: [
+    {
+      secretType: 'BASIC',
+      registryEndpoint: registryEndpoint,
+      username: Buffer.from(config.require('pullerUsername')).toString('base64'),
+      password: Buffer.from(config.require('pullerPassword')).toString('base64'),
+    },
+  ],
+  shape: 'CI.Standard.E4.Flex',
+  shapeConfig: {
+    ocpus: 1,
+    memoryInGbs: 1,
   },
-);
+  vnics: [
+    {
+      subnetId: prodPrivateSubnet.id,
+      nsgIds: [containerNsg.id],
+      isPublicIpAssigned: false,
+    },
+  ],
+  displayName: 'mope-blog',
+});
 
 export const containerInstanceID = containerInstance.id;
 
@@ -308,42 +291,31 @@ const nlb = new oci.networkloadbalancer.NetworkLoadBalancer('mope-blog-nlb', {
   isPrivate: false,
 });
 
-const nlbBackendSet = new oci.networkloadbalancer.BackendSet(
-  'mope-blog-nlb-backend-set',
-  {
-    name: 'mope-blog-nlb-backend-set',
-    networkLoadBalancerId: nlb.id,
-    healthChecker: {
-      protocol: 'HTTP',
-      port: 80,
-      returnCode: 200,
-      urlPath: '/health',
-    },
-    policy: 'FIVE_TUPLE',
-  },
-);
-
-// biome-ignore lint/correctness/noUnusedVariables: oci resource
-const nlbBackend = new oci.networkloadbalancer.Backend(
-  'mope-blog-nlb-backend',
-  {
-    name: 'mope-blog-nlb-backend',
-    networkLoadBalancerId: nlb.id,
-    backendSetName: nlbBackendSet.name,
-    ipAddress: containerInstance.vnics[0].privateIp,
+const nlbBackendSet = new oci.networkloadbalancer.BackendSet('mope-blog-nlb-backend-set', {
+  name: 'mope-blog-nlb-backend-set',
+  networkLoadBalancerId: nlb.id,
+  healthChecker: {
+    protocol: 'HTTP',
     port: 80,
-    weight: 1,
+    returnCode: 200,
+    urlPath: '/health',
   },
-);
+  policy: 'FIVE_TUPLE',
+});
 
-// biome-ignore lint/correctness/noUnusedVariables: oci resource
-const nlbListener = new oci.networkloadbalancer.Listener(
-  'mope-blog-nlb-listener',
-  {
-    name: 'mope-blog-nlb-listener',
-    networkLoadBalancerId: nlb.id,
-    port: 80,
-    protocol: 'TCP',
-    defaultBackendSetName: nlbBackendSet.name,
-  },
-);
+const _nlbBackend = new oci.networkloadbalancer.Backend('mope-blog-nlb-backend', {
+  name: 'mope-blog-nlb-backend',
+  networkLoadBalancerId: nlb.id,
+  backendSetName: nlbBackendSet.name,
+  ipAddress: containerInstance.vnics[0].privateIp,
+  port: 80,
+  weight: 1,
+});
+
+const _nlbListener = new oci.networkloadbalancer.Listener('mope-blog-nlb-listener', {
+  name: 'mope-blog-nlb-listener',
+  networkLoadBalancerId: nlb.id,
+  port: 80,
+  protocol: 'TCP',
+  defaultBackendSetName: nlbBackendSet.name,
+});

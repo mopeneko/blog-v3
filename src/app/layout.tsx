@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Script from 'next/script';
+// @ts-ignore
 import '@radix-ui/themes/styles.css';
 import { Box, Flex, Text, Theme } from '@/components/radix';
 import Link from 'next/link';
@@ -44,10 +45,7 @@ export default function RootLayout({
                   width: '100%',
                 }}
               >
-                <Link
-                  href="/"
-                  style={{ color: 'inherit', textDecoration: 'none' }}
-                >
+                <Link href="/" style={{ color: 'inherit', textDecoration: 'none' }}>
                   <Text weight="medium" color="cyan">
                     {'もぺブログ'}
                   </Text>

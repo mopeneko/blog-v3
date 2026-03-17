@@ -1,13 +1,4 @@
-import {
-  Badge,
-  Box,
-  Card,
-  Flex,
-  Grid,
-  Heading,
-  Inset,
-  Text,
-} from '@/components/radix';
+import { Badge, Box, Card, Flex, Grid, Heading, Inset, Text } from '@/components/radix';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
@@ -23,9 +14,7 @@ const formatDate = (date: string) =>
     timeZone: 'JST',
   });
 
-export async function generateMetadata(
-  props: PageProps<'/tags/[id]'>,
-): Promise<Metadata> {
+export async function generateMetadata(props: PageProps<'/tags/[id]'>): Promise<Metadata> {
   const { id } = await props.params;
   const tag = await fetchTagById(id);
 
@@ -118,11 +107,7 @@ export default async function TagPage(props: PageProps<'/tags/[id]'>) {
                         height: '100%',
                       }}
                     >
-                      <Flex
-                        direction="column"
-                        gap="3"
-                        style={{ height: '100%' }}
-                      >
+                      <Flex direction="column" gap="3" style={{ height: '100%' }}>
                         <Inset clip="padding-box" side="top" pb="current">
                           <Box
                             style={{
@@ -139,11 +124,7 @@ export default async function TagPage(props: PageProps<'/tags/[id]'>) {
                           </Box>
                         </Inset>
 
-                        <Flex
-                          direction="column"
-                          gap="2"
-                          style={{ flexGrow: 1 }}
-                        >
+                        <Flex direction="column" gap="2" style={{ flexGrow: 1 }}>
                           <Heading size="4">{article.title}</Heading>
                           <Text color="gray" size="2">
                             {formatDate(article.date)}
@@ -173,13 +154,8 @@ export default async function TagPage(props: PageProps<'/tags/[id]'>) {
             <Card variant="surface" size="3">
               <Flex direction="column" gap="2">
                 <Heading size="4">記事が見つかりませんでした</Heading>
-                <Text color="gray">
-                  記事が追加され次第、このタグページに表示されます。
-                </Text>
-                <Link
-                  href="/"
-                  style={{ color: 'inherit', textDecoration: 'none' }}
-                >
+                <Text color="gray">記事が追加され次第、このタグページに表示されます。</Text>
+                <Link href="/" style={{ color: 'inherit', textDecoration: 'none' }}>
                   <Text weight="medium" color="cyan">
                     ホームに戻る
                   </Text>

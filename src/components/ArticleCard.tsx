@@ -40,13 +40,7 @@ export const ArticleCard = ({
     <article className="card bg-base-200 shadow-sm">
       {image && (
         <figure className="aspect-video">
-          <Image
-            src={image.src}
-            alt=""
-            width={image.width}
-            height={image.height}
-            loading="lazy"
-          />
+          <Image src={image.src} alt="" width={image.width} height={image.height} loading="lazy" />
         </figure>
       )}
 
@@ -64,9 +58,7 @@ export const ArticleCard = ({
               {tags.map((tag, i) => (
                 <React.Fragment key={tag.id}>
                   {i > 0 && ' '}
-                  <span className="badge badge-soft badge-neutral">
-                    {tag.name}
-                  </span>
+                  <span className="badge badge-soft badge-neutral">{tag.name}</span>
                 </React.Fragment>
               ))}
             </div>

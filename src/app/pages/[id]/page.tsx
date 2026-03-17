@@ -7,9 +7,7 @@ import { rehype } from 'rehype';
 import { rehypeExtractBodyContents } from '@/lib/rehype/extractBodyContents';
 import styles from './page.module.css';
 
-export async function generateMetadata(
-  props: PageProps<'/pages/[id]'>,
-): Promise<Metadata> {
+export async function generateMetadata(props: PageProps<'/pages/[id]'>): Promise<Metadata> {
   const { id } = await props.params;
   const page = await fetchPageBySlug(id);
 
@@ -82,9 +80,7 @@ export default async function Page(props: PageProps<'/pages/[id]'>) {
     notFound();
   }
 
-  const content = String(
-    await rehype().use(rehypeExtractBodyContents).process(detail.content),
-  );
+  const content = String(await rehype().use(rehypeExtractBodyContents).process(detail.content));
 
   const heroThumbnailStyle = detail.thumbnailUrl
     ? {
@@ -108,12 +104,7 @@ export default async function Page(props: PageProps<'/pages/[id]'>) {
               </Inset>
 
               <Flex direction={{ initial: 'column', sm: 'row' }} gap="3">
-                <Flex
-                  gap="3"
-                  align="center"
-                  wrap="wrap"
-                  className={styles.meta}
-                >
+                <Flex gap="3" align="center" wrap="wrap" className={styles.meta}>
                   <Text color="gray" size="2">
                     公開: {formatDate(detail.date)}
                   </Text>

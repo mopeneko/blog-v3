@@ -19,12 +19,7 @@ interface ProductCardProps {
   links: Link[];
 }
 
-export const ProductCard = ({
-  name,
-  manufacture,
-  image,
-  links,
-}: ProductCardProps) => (
+export const ProductCard = ({ name, manufacture, image, links }: ProductCardProps) => (
   <div className="card bg-base-300 shadow-sm">
     {image && (
       <figure className="aspect-video">

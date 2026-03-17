@@ -2,21 +2,22 @@
   "name": "blog-v3",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "vinext dev",
     "build": "vinext build",
     "start": "vinext start",
-    "lint": "biome lint",
-    "lint:fix": "biome lint --write",
-    "format": "biome format --write",
-    "test": "vitest",
-    "test:ui": "vitest --ui",
-    "deploy": "vinext deploy"
+    "check": "vp check",
+    "test": "vp test",
+    "test:ui": "vp test --ui",
+    "deploy": "vinext deploy",
+    "prepare": "vp config"
   },
   "dependencies": {
     "@radix-ui/themes": "^3.3.0",
     "lite-youtube-embed": "^0.3.4",
     "microcms-js-sdk": "^3.3.0",
+    "next": "16.1.7",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "rehype": "^13.0.2",
@@ -43,11 +44,16 @@
     "react-server-dom-webpack": "^19.2.4",
     "tailwindcss": "^4.2.1",
     "typescript": "^5.9.3",
-    "vite": "^8.0.0",
-    "vitest": "^4.1.0",
+    "vite": "npm:@voidzero-dev/vite-plus-core@latest",
+    "vite-plus": "latest",
+    "vitest": "npm:@voidzero-dev/vite-plus-test@latest",
     "wrangler": "^4.74.0"
   },
-  "type": "module",
+  "overrides": {
+    "vite": "npm:@voidzero-dev/vite-plus-core@latest",
+    "vitest": "npm:@voidzero-dev/vite-plus-test@latest"
+  },
+  "packageManager": "pnpm@10.32.1",
   "patchedDependencies": {
     "@cloudflare/vite-plugin@1.29.0": "patches/@cloudflare%2Fvite-plugin@1.29.0.patch"
   }
