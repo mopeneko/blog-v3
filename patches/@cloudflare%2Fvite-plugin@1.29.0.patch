@@ -1,0 +1,13 @@
+diff --git a/dist/workers/runner-worker.js b/dist/workers/runner-worker.js
+index d3e675e0a9523a263c4db0caeaa9e555b3c42b54..f71b01f21d91db799ed8e226efd1ded7690cef81 100644
+--- a/dist/workers/runner-worker.js
++++ b/dist/workers/runner-worker.js
+@@ -1310,7 +1310,7 @@ async function createModuleRunner(env, webSocket, environmentName) {
+ 		hmr: true
+ 	}, {
+ 		async runInlinedModule(context, transformed, module) {
+-			const code = `"use strict";async (${Object.keys(context).join(",")})=>{${transformed}}`;
++			const code = `"use strict";async (${Object.keys(context).join(",")})=>{\n${transformed}\n}`;
+ 			await env.__VITE_UNSAFE_EVAL__.eval(code, module.id)(...Object.values(context));
+ 			Object.seal(context[ssrModuleExportsKey]);
+ 		},
